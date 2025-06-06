@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import PlanFormModal from "@/components/plan-form-modal"
 import plansData from "@/data/plans.json"
-import terms from "@/components/terms"
+import UploadPaymentScreenshot from "@/components/cloud.upload";
 interface Plan {
   id: string
   title: string

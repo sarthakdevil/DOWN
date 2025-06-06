@@ -12,6 +12,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Upload } from "lucide-react"
 import Link from "next/link"
+import UploadPaymentScreenshot from "./cloud.upload"
+import { CldUploadWidget } from "next-cloudinary"
 interface Plan {
   id: string
   title: string
@@ -591,34 +593,29 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
             </div>
 
             <div>
-              <Label htmlFor="paymentScreenshot" className="text-white">
-                Upload Payment Screenshot *
-              </Label>
-              <div className="mt-2">
-                <label
-                  htmlFor="paymentScreenshot"
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700"
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-4 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-400">
-                      <span className="font-semibold">Click to upload</span> payment screenshot
-                    </p>
-                    <p className="text-xs text-gray-400">PNG, JPG or JPEG (MAX. 5MB)</p>
-                  </div>
-                  <input
-                    id="paymentScreenshot"
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    required
-                  />
-                </label>
-                {formData.paymentScreenshot && (
-                  <p className="mt-2 text-sm text-green-400">File uploaded: {formData.paymentScreenshot.name}</p>
+              <CldUploadWidget 
+                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                options={{
+                  folder: "mulakatjunction/screenshots",
+                  singleUploadAutoClose: true,
+                }}
+                onSuccess={(result: any) => {
+                  const url = result.info.secure_url
+                  handleInputChange("paymentScreenshot", url)
+                }}
+              >
+                {({ open }) => (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => open()}
+                    className="w-full flex items-center justify-center gap-2 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Upload Payment Screenshot
+                  </Button>
                 )}
-              </div>
+              </CldUploadWidget>
             </div>
 
             <div className="flex gap-4">
