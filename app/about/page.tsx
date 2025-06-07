@@ -201,51 +201,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Press */}
-      <section className="py-16 bg-gradient-to-b from-black to-gray-900">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">DOWNDATING in the Press</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              See what the media is saying about our innovative approach to dating.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                publication: "Dating Today",
-                title: "DOWNDATING Revolutionizes the Dating Scene with Hybrid Approach",
-                excerpt:
-                  "By combining technology with in-person events, DOWNDATING is changing how singles meet and form meaningful connections.",
-              },
-              {
-                publication: "Tech Insider",
-                title: "The Science Behind DOWNDATING's Successful Matching Algorithm",
-                excerpt:
-                  "An inside look at how DOWNDATING's proprietary algorithm achieves a 78% success rate in creating compatible matches.",
-              },
-              {
-                publication: "Lifestyle Magazine",
-                title: "Dating Events That Actually Work: The DOWNDATING Story",
-                excerpt:
-                  "How DOWNDATING's carefully curated events are helping singles overcome dating app fatigue and find real connections.",
-              },
-            ].map((article, index) => (
-              <div key={index} className="bg-black p-6 rounded-lg border border-gray-800">
-                <p className="text-red-500 mb-2">{article.publication}</p>
-                <h3 className="text-xl font-bold text-white mb-3">{article.title}</h3>
-                <p className="text-gray-400 mb-4">{article.excerpt}</p>
-                <Button variant="link" className="text-red-500 p-0">
-                  Read Article →
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="py-16 bg-black">
         <div className="container">
@@ -257,7 +212,7 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white" asChild>
-                <Link href="/events">Browse Events</Link>
+                <Link href="/">Go to home</Link>
               </Button>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
                 <Link href="/plans">View Plans</Link>
