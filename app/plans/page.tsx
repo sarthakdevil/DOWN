@@ -40,7 +40,7 @@ export default function PlansPage() {
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-black/70 z-10"></div>
         <Image
-          src="/placeholder.svg?height=600&width=1920&text=Dating Plans"
+          src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg"
           alt="Dating Plans background"
           fill
           className="object-cover brightness-50"

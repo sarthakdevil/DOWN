@@ -9,7 +9,7 @@ export default function AboutPage() {
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-black/70 z-10"></div>
         <Image
-          src="/placeholder.svg?height=600&width=1920&text=About Us"
+          src="/WhatsApp Image 2025-06-07 at 16.34.57_20ca118e.jpg"
           alt="About Us background"
           fill
           className="object-cover brightness-50"
@@ -18,8 +18,12 @@ export default function AboutPage() {
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Story</h1>
             <p className="text-xl text-white/80 mb-8 max-w-2xl">
-              LoveConnect was founded with a simple mission: to create meaningful connections in a world where dating
-              has become increasingly digital.
+              DOWNDATING began as a fun experiment by a group of college students who noticed how many great connections
+              were missed at campus events. What started as a small matchmaking initiative at college fests quickly
+              turned into something bigger. We focused on creating meaningful matches based on shared vibes, interests,
+              and real-life interactions—not just profiles. With each successful date, word spread, and what began as a
+              passion project grew into a thriving startup. Today, DOWNDATING continues to connect people authentically,
+              turning casual meetups into lasting stories.
             </p>
           </div>
         </div>
@@ -32,23 +36,26 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
               <p className="text-gray-300 mb-4">
-                At LoveConnect, we believe that meaningful relationships are the foundation of a fulfilling life. Our
-                mission is to help singles find genuine connections through innovative dating experiences both online
-                and offline.
+                At DOWNDATING, we believe that love shouldn’t start with awkward swipes or cheesy bios—it should begin
+                with a spark, a smile, maybe even a bad joke at a college event. That’s how we started too—a bunch of
+                friends trying to match people up for fun at campus fests. But when we saw real connections blooming
+                (and even a few couples holding hands at the canteen), we knew we were onto something special.
               </p>
               <p className="text-gray-300 mb-4">
-                We're not just another dating app or service. We combine technology with real-world experiences to
-                create opportunities for authentic connections. Our unique approach blends digital matching with
-                in-person events to give you the best of both worlds.
+                We’re here to bring the heart back into dating. DOWNDATING is all about real vibes, genuine moments, and
+                helping people meet the way it should feel—easy, exciting, and a little bit magical. Whether it’s a
+                shared love for midnight chai, indie music, or terrible puns, we help people find matches that actually
+                click. No pressure, just possibilities.
               </p>
               <p className="text-gray-300">
-                Whether you're looking for a serious relationship or just wanting to meet new people, LoveConnect
-                provides a safe, inclusive, and fun environment to help you on your journey.
+                Our mission is simple: to turn casual meetups into sweet memories, and sparks into something more. We
+                want to make dating feel natural, warm, and full of little butterflies again. Because honestly? Everyone
+                deserves a cute “how we met” story—and we’re here to help you write yours. 
               </p>
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden">
               <Image
-                src="/placeholder.svg?height=400&width=600&text=Our Mission"
+                src="/WhatsApp Image 2025-06-07 at 16.34.59_78ad2dd5.jpg"
                 alt="Our Mission"
                 fill
                 className="object-cover"
@@ -115,45 +122,29 @@ export default function AboutPage() {
       <section className="py-16 bg-gray-900">
         <div className="container">
           <h2 className="text-3xl font-bold text-white mb-12 text-center">Meet Our Team</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                name: "Alex Johnson",
-                role: "Founder & CEO",
-                bio: "Alex founded LoveConnect after experiencing the challenges of modern dating firsthand. With a background in psychology and tech, he's passionate about creating meaningful connections.",
-              },
-              {
-                name: "Sarah Chen",
-                role: "Chief Matchmaker",
-                bio: "With over 10 years of experience in matchmaking, Sarah leads our team of relationship experts who curate our matching algorithms and provide personalized coaching.",
-              },
-              {
-                name: "Michael Rodriguez",
-                role: "Events Director",
-                bio: "Michael brings his extensive background in event planning to create unforgettable dating experiences that help singles connect in authentic ways.",
-              },
-              {
-                name: "Jessica Kim",
-                role: "Head of Technology",
-                bio: "Jessica oversees our platform development, ensuring that our technology enhances rather than replaces the human element of dating.",
-              },
-            ].map((member, index) => (
-              <div key={index} className="bg-black rounded-lg overflow-hidden border border-gray-800">
-                <div className="h-64 relative">
-                  <Image
-                    src={`/placeholder.svg?height=300&width=300&text=${member.name}`}
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
-                  <p className="text-red-500 mb-4">{member.role}</p>
-                  <p className="text-gray-400">{member.bio}</p>
-                </div>
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-black rounded-lg overflow-hidden border border-gray-800">
+              <div className="h-[400px] relative">
+                <Image
+                  src="/WhatsApp Image 2025-06-07 at 16.37.07_0b6863d6.jpg"
+                  alt="DOWNDATING Team"
+                  fill
+                  className="object-cover"
+                />
               </div>
-            ))}
+              <div className="p-8">
+                <h3 className="text-2xl font-bold text-white mb-3">The DOWNDATING Founders</h3>
+                <p className="text-red-500 mb-4">Team DOWNDATING</p>
+                <p className="text-gray-400">
+                  What started as a casual conversation in a college canteen has now turned into DOWNDATING. Our
+                  founding team brings together expertise in psychology, technology, and event planning with a shared
+                  passion for creating authentic connections. As college friends who saw too many people struggling with
+                  traditional dating apps, we decided to build something different—a platform that celebrates real
+                  interactions and meaningful relationships. Together, we're on a mission to make dating feel natural,
+                  fun, and full of possibilities again.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -173,27 +164,27 @@ export default function AboutPage() {
             {[
               {
                 quote:
-                  "After trying countless dating apps with no success, LoveConnect's events changed everything. Meeting people face-to-face in a structured environment made all the difference. I met my fiancé at a speed dating night!",
-                name: "Rachel T.",
-                location: "New York",
+                  "After trying countless dating apps with no success, DOWNDATING's events changed everything. Meeting people face-to-face in a structured environment made all the difference. I met my fiancé at a speed dating night!",
+                name: "Priya Sharma",
+                location: "Mumbai",
               },
               {
                 quote:
                   "The Premium Connect plan matched me with exactly the kind of person I was looking for. The compatibility algorithm is incredible. We've been dating for 6 months now and things are going great.",
-                name: "James L.",
-                location: "Chicago",
+                name: "Arjun Patel",
+                location: "Delhi",
               },
               {
                 quote:
-                  "As an introvert, dating events seemed intimidating, but LoveConnect's format made it easy to connect. The hosts were fantastic at making everyone feel comfortable. I'm now dating someone I met at a wine tasting event!",
-                name: "Sophia K.",
-                location: "San Francisco",
+                  "As an introvert, dating events seemed intimidating, but DOWNDATING's format made it easy to connect. The hosts were fantastic at making everyone feel comfortable. I'm now dating someone I met at a wine tasting event!",
+                name: "Meera Kapoor",
+                location: "Bangalore",
               },
               {
                 quote:
                   "The personal matchmaker from the Elite plan took the time to understand what I was looking for. The quality of matches was far better than anything I experienced on other platforms. Worth every penny!",
-                name: "Marcus J.",
-                location: "Miami",
+                name: "Vikram Singh",
+                location: "Hyderabad",
               },
             ].map((testimonial, index) => (
               <div key={index} className="bg-gray-900 p-8 rounded-lg border border-gray-800">
@@ -215,7 +206,7 @@ export default function AboutPage() {
       <section className="py-16 bg-gradient-to-b from-black to-gray-900">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">LoveConnect in the Press</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">DOWNDATING in the Press</h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               See what the media is saying about our innovative approach to dating.
             </p>
@@ -225,21 +216,21 @@ export default function AboutPage() {
             {[
               {
                 publication: "Dating Today",
-                title: "LoveConnect Revolutionizes the Dating Scene with Hybrid Approach",
+                title: "DOWNDATING Revolutionizes the Dating Scene with Hybrid Approach",
                 excerpt:
-                  "By combining technology with in-person events, LoveConnect is changing how singles meet and form meaningful connections.",
+                  "By combining technology with in-person events, DOWNDATING is changing how singles meet and form meaningful connections.",
               },
               {
                 publication: "Tech Insider",
-                title: "The Science Behind LoveConnect's Successful Matching Algorithm",
+                title: "The Science Behind DOWNDATING's Successful Matching Algorithm",
                 excerpt:
-                  "An inside look at how LoveConnect's proprietary algorithm achieves a 78% success rate in creating compatible matches.",
+                  "An inside look at how DOWNDATING's proprietary algorithm achieves a 78% success rate in creating compatible matches.",
               },
               {
                 publication: "Lifestyle Magazine",
-                title: "Dating Events That Actually Work: The LoveConnect Story",
+                title: "Dating Events That Actually Work: The DOWNDATING Story",
                 excerpt:
-                  "How LoveConnect's carefully curated events are helping singles overcome dating app fatigue and find real connections.",
+                  "How DOWNDATING's carefully curated events are helping singles overcome dating app fatigue and find real connections.",
               },
             ].map((article, index) => (
               <div key={index} className="bg-black p-6 rounded-lg border border-gray-800">
@@ -259,7 +250,7 @@ export default function AboutPage() {
       <section className="py-16 bg-black">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Join the LoveConnect Community</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Join the DOWNDATING Community</h2>
             <p className="text-xl text-white/80 mb-8">
               Whether you're looking for a serious relationship or just want to meet new people, we're here to help you
               connect.

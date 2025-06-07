@@ -10,7 +10,7 @@ export default function Home() {
       <section className="relative h-[90vh] overflow-hidden">
         <div className="absolute inset-0 bg-black/70 z-10"></div>
         <Image
-          src="/download.jpg"
+          src="/WhatsApp Image 2025-06-07 at 16.34.57_20ca118e.jpg"
           alt="Dating event background"
           fill
           className="object-cover brightness-50"
@@ -143,9 +143,9 @@ export default function Home() {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-white">
-                      {["Sarah & Mike", "Jessica & David", "Emma & John"][item - 1]}
+                      {["Shreya and Aman", "Riya and Kabir", "Neha and Rahul"][item - 1]}
                     </h4>
-                    <p className="text-gray-400">{["New York", "Chicago", "Los Angeles"][item - 1]}</p>
+                    <p className="text-gray-400">{["Delhi", "Mumbai", "Bangalore"][item - 1]}</p>
                   </div>
                 </div>
                 <p className="text-gray-300">
@@ -167,7 +167,7 @@ export default function Home() {
       <section className="py-16 bg-black relative overflow-hidden">
         <div className="absolute inset-0 bg-black/70 z-10"></div>
         <Image
-          src="/placeholder.svg?height=600&width=1920"
+          src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg"
           alt="CTA background"
           fill
           className="object-cover brightness-25"
