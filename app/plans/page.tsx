@@ -1,12 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import PlanFormModal from "@/components/plan-form-modal"
 import plansData from "@/data/plans.json"
-import UploadPaymentScreenshot from "@/components/cloud.upload";
 interface Plan {
   id: string
   title: string
@@ -37,15 +35,8 @@ export default function PlansPage() {
   return (
     <div className="bg-black min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-black/70 z-10"></div>
-        <Image
-          src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg"
-          alt="Dating Plans background"
-          fill
-          className="object-cover brightness-50"
-        />
-        <div className="container relative z-20">
+      <section className="py-20 bg-gray-900">
+        <div className="container">
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Dating Plans for Every Need</h1>
             <p className="text-xl text-white/80 mb-8 max-w-2xl">
@@ -179,21 +170,21 @@ export default function PlansPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                name: "Sarah & Mike",
+                name: "Priya & Arjun",
                 plan: "Premium Connect",
                 location: "Mumbai",
                 story:
                   "The Premium Connect plan matched us perfectly based on our interests and values. We've been together for a year now and couldn't be happier.",
               },
               {
-                name: "Jessica & David",
+                name: "Meera & Vikram",
                 plan: "Elite Romance",
                 location: "Delhi",
                 story:
                   "The personal matchmaker from the Elite Romance plan found us the perfect match. We're celebrating our 6-month anniversary next week!",
               },
               {
-                name: "Emma & John",
+                name: "Kavya & Rohit",
                 plan: "Basic Match",
                 location: "Bangalore",
                 story:
@@ -202,15 +193,7 @@ export default function PlansPage() {
             ].map((testimonial, index) => (
               <div key={index} className="bg-black p-6 rounded-lg border border-gray-800">
                 <div className="flex items-center mb-4">
-                  <div className="mr-4">
-                    <Image
-                      src={`/placeholder.svg?height=80&width=80&text=User`}
-                      alt="User"
-                      width={60}
-                      height={60}
-                      className="rounded-full"
-                    />
-                  </div>
+                  <div className="mr-4"></div>
                   <div>
                     <h4 className="text-lg font-semibold text-white">{testimonial.name}</h4>
                     <p className="text-gray-400">
