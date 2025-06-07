@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, Check, Loader2 } from "lucide-react"
+import { Upload, Check, Loader2 } from 'lucide-react'
 import Link from "next/link"
 import { uploadToCloudinary } from "@/app/api/cloudinary/cloudinary"
 
@@ -48,6 +48,7 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
     paymentScreenshotUrl: "",
     agreeToTerms: false,
     agreeToPrivacy: false,
+    salary: "",
   })
 
   const [showPayment, setShowPayment] = useState(false)
@@ -178,6 +179,7 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
           paymentScreenshotUrl: "",
           agreeToTerms: false,
           agreeToPrivacy: false,
+          salary: "",
         })
         setShowPayment(false)
       } else {
@@ -261,6 +263,22 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
                   />
                 </div>
               </div>
+
+              {(plan.title.toLowerCase().includes('corporate') || plan.title.toLowerCase().includes('corporate-match')) && (
+                <div>
+                  <Label htmlFor="salary" className="text-white">
+                    What is your salary? *
+                  </Label>
+                  <Input
+                    id="salary"
+                    value={formData.salary}
+                    onChange={(e) => handleInputChange("salary", e.target.value)}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="e.g., ₹8,00,000 per annum"
+                    required
+                  />
+                </div>
+              )}
 
               <div>
                 <Label className="text-white">Gender *</Label>
