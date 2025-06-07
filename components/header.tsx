@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-
+import Image from "next/image"
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -17,10 +17,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-black/80 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center">
-          <span className="text-2xl font-bold">
-            <span className="bg-red-600 px-2 py-1 text-white">LOVE</span>
-            <span className="text-white">CONNECT</span>
-          </span>
+          <Image src="/logo.jpg" alt="alt" width={60} height={60} />
         </Link>
 
         {/* Mobile menu button */}

@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Facebook, Instagram, Twitter } from "lucide-react"
+import Image from "next/image"
 
 export default function Footer() {
   return (
@@ -8,10 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Link href="/" className="flex items-center mb-4">
-              <span className="text-2xl font-bold">
-                <span className="bg-red-600 px-2 py-1">DOWN</span>
-                <span>DATING</span>
-              </span>
+            <Image src="/logo.jpg" alt="alt" width={60} height={60} />
             </Link>
             <p className="text-gray-400 mb-4">
               The most exciting dating experience in your city. Find your match through our premium dating plans.
@@ -57,7 +55,7 @@ export default function Footer() {
               <p>Dwarka Sec 16C</p>
               <p>New Delhi, India</p>
               <p>Email: downdatingshow@gmail.com</p>
-              <p>Phone: +91 98765 43210</p>
+              <p>Phone: +91 92113 18912</p>
             </address>
           </div>
           <div>
