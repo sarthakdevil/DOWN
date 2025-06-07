@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,9 +9,9 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, Check } from "lucide-react"
+import { Upload, Check, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { CldUploadWidget } from "next-cloudinary"
+import { uploadToCloudinary } from "@/app/api/cloudinary/cloudinary"
 
 interface Plan {
   id: string
@@ -53,9 +52,72 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
 
   const [showPayment, setShowPayment] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  // Convert file to ArrayBuffer, then to base64
+  const convertFileToBase64 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (reader.result instanceof ArrayBuffer) {
+          // Convert ArrayBuffer to base64
+          const uint8Array = new Uint8Array(reader.result)
+          let binary = ""
+          for (let i = 0; i < uint8Array.length; i++) {
+            binary += String.fromCharCode(uint8Array[i])
+          }
+          const base64 = btoa(binary)
+          resolve(base64)
+        } else {
+          reject(new Error("Failed to read file as ArrayBuffer"))
+        }
+      }
+      reader.onerror = () => reject(reader.error)
+      reader.readAsArrayBuffer(file)
+    })
+  }
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file")
+      return
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File size must be less than 5MB")
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      // Convert file to base64
+      const base64 = await convertFileToBase64(file)
+
+      // Upload to Cloudinary using server function
+      const imageUrl = await uploadToCloudinary(base64)
+
+      if (imageUrl) {
+        handleInputChange("paymentScreenshotUrl", imageUrl)
+      } else {
+        throw new Error("Upload failed")
+      }
+    } catch (error) {
+      console.error("Upload error:", error)
+      alert("Failed to upload image. Please try again.")
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -595,42 +657,29 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
 
             <div>
               <Label className="text-white mb-2 block">Upload Payment Screenshot *</Label>
-              <CldUploadWidget
-                uploadPreset="downdating_uploads"
-                options={{
-                  folder: "downdating/payment-screenshots",
-                  singleUploadAutoClose: true,
-                  sources: ["local"],
-                  multiple: false,
-                  maxFiles: 1,
-                  clientAllowedFormats: ["jpg", "jpeg", "png"],
-                  maxFileSize: 5000000, // 5MB
-                }}
-                onSuccess={(result: any) => {
-                  const url = result.info.secure_url
-                  handleInputChange("paymentScreenshotUrl", url)
-                }}
-              >
-                {({ open }) => (
-                  <div className="space-y-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => open()}
-                      className="w-full flex items-center justify-center gap-2 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
-                    >
-                      <Upload className="h-4 w-4" />
-                      {formData.paymentScreenshotUrl ? "Change Screenshot" : "Upload Payment Screenshot"}
-                    </Button>
-                    {formData.paymentScreenshotUrl && (
-                      <div className="flex items-center gap-2 text-green-400 text-sm">
-                        <Check className="h-4 w-4" />
-                        Screenshot uploaded successfully
-                      </div>
-                    )}
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+              <div className="space-y-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-800 border-gray-700 text-white hover:bg-gray-700 disabled:opacity-50"
+                >
+                  {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {isUploading
+                    ? "Uploading..."
+                    : formData.paymentScreenshotUrl
+                      ? "Change Screenshot"
+                      : "Upload Payment Screenshot"}
+                </Button>
+                {formData.paymentScreenshotUrl && (
+                  <div className="flex items-center gap-2 text-green-400 text-sm">
+                    <Check className="h-4 w-4" />
+                    Screenshot uploaded successfully
                   </div>
                 )}
-              </CldUploadWidget>
+              </div>
             </div>
 
             <div className="flex gap-4">
