@@ -133,7 +133,7 @@ export default function AboutPage() {
                 />
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-3">The DOWNDATING Founders</h3>
+                <h3 className="text-2xl font-bold text-white mb-3">The DOWNDATING Core Team</h3>
                 <p className="text-red-500 mb-4">Team DOWNDATING</p>
                 <p className="text-gray-400">
                   What started as a casual conversation in a college canteen has now turned into DOWNDATING. Our
