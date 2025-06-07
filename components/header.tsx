@@ -40,12 +40,6 @@ export default function Header() {
           <Link href="/about" className="text-sm font-medium uppercase text-white hover:text-red-500 transition-colors">
             About
           </Link>
-          <Link
-            href="/contact"
-            className="text-sm font-medium uppercase text-white hover:text-red-500 transition-colors"
-          >
-            Contact
-          </Link>
           <Button className="bg-red-600 hover:bg-red-700 text-white">Sign Up</Button>
         </nav>
 
@@ -77,13 +71,6 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               About
-            </Link>
-            <Link
-              href="/contact"
-              className="flex w-full items-center py-3 text-white hover:text-red-500 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Contact
             </Link>
             <Button className="w-full bg-red-600 hover:bg-red-700 text-white">Sign Up</Button>
           </nav>
