@@ -10,10 +10,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Upload } from "lucide-react"
+import { Upload, Check } from "lucide-react"
 import Link from "next/link"
-import UploadPaymentScreenshot from "./cloud.upload"
 import { CldUploadWidget } from "next-cloudinary"
+
 interface Plan {
   id: string
   title: string
@@ -46,7 +46,7 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
     greenFlag: "",
     perfectDate: "",
     pitchYourself: "",
-    paymentScreenshot: null as File | null,
+    paymentScreenshotUrl: "",
     agreeToTerms: false,
     agreeToPrivacy: false,
   })
@@ -54,15 +54,8 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
   const [showPayment, setShowPayment] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleInputChange = (field: string, value: string | boolean | File | null) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      handleInputChange("paymentScreenshot", file)
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -77,7 +70,7 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
       return
     }
 
-    if (!formData.paymentScreenshot) {
+    if (!formData.paymentScreenshotUrl) {
       alert("Please upload payment screenshot")
       return
     }
@@ -85,19 +78,19 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
     setIsSubmitting(true)
 
     try {
-      const submitData = new FormData()
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null) {
-          submitData.append(key, value.toString())
-        }
-      })
-      submitData.append("planId", plan?.id || "")
-      submitData.append("planTitle", plan?.title || "")
-      submitData.append("planPrice", plan?.price.toString() || "")
+      const submitData = {
+        ...formData,
+        planId: plan?.id || "",
+        planTitle: plan?.title || "",
+        planPrice: plan?.price || 0,
+      }
 
       const response = await fetch("/api/submit-plan", {
         method: "POST",
-        body: submitData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submitData),
       })
 
       if (response.ok) {
@@ -120,7 +113,7 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
           greenFlag: "",
           perfectDate: "",
           pitchYourself: "",
-          paymentScreenshot: null as File | null,
+          paymentScreenshotUrl: "",
           agreeToTerms: false,
           agreeToPrivacy: false,
         })
@@ -538,7 +531,11 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
                   onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked)}
                 />
                 <Label htmlFor="terms" className="text-white text-sm">
-                  I agree to the <Link href="/terms">Terms and Conditions *</Link>
+                  I agree to the{" "}
+                  <Link href="/terms" className="text-red-500 hover:underline">
+                    Terms and Conditions
+                  </Link>{" "}
+                  *
                 </Label>
               </div>
 
@@ -549,7 +546,11 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
                   onCheckedChange={(checked) => handleInputChange("agreeToPrivacy", checked)}
                 />
                 <Label htmlFor="privacy" className="text-white text-sm">
-                  I agree to the Privacy Policy *
+                  I agree to the{" "}
+                  <Link href="/privacy" className="text-red-500 hover:underline">
+                    Privacy Policy
+                  </Link>{" "}
+                  *
                 </Label>
               </div>
             </div>
@@ -580,10 +581,10 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
 
                 <div className="text-left space-y-2 text-sm text-gray-400">
                   <p>
-                    <strong>UPI ID:</strong> loveconnect@paytm
+                    <strong>UPI ID:</strong> s36448@ptaxis
                   </p>
                   <p>
-                    <strong>Account Name:</strong> LoveConnect Dating Services
+                    <strong>Account Name:</strong> Downdating Services
                   </p>
                   <p>
                     <strong>Amount:</strong> ₹{plan.price}
@@ -593,27 +594,41 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
             </div>
 
             <div>
-              <CldUploadWidget 
-                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+              <Label className="text-white mb-2 block">Upload Payment Screenshot *</Label>
+              <CldUploadWidget
+                uploadPreset="downdating_uploads"
                 options={{
-                  folder: "mulakatjunction/screenshots",
+                  folder: "downdating/payment-screenshots",
                   singleUploadAutoClose: true,
+                  sources: ["local"],
+                  multiple: false,
+                  maxFiles: 1,
+                  clientAllowedFormats: ["jpg", "jpeg", "png"],
+                  maxFileSize: 5000000, // 5MB
                 }}
                 onSuccess={(result: any) => {
                   const url = result.info.secure_url
-                  handleInputChange("paymentScreenshot", url)
+                  handleInputChange("paymentScreenshotUrl", url)
                 }}
               >
                 {({ open }) => (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => open()}
-                    className="w-full flex items-center justify-center gap-2 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
-                  >
-                    <Upload className="h-4 w-4" />
-                    Upload Payment Screenshot
-                  </Button>
+                  <div className="space-y-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => open()}
+                      className="w-full flex items-center justify-center gap-2 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {formData.paymentScreenshotUrl ? "Change Screenshot" : "Upload Payment Screenshot"}
+                    </Button>
+                    {formData.paymentScreenshotUrl && (
+                      <div className="flex items-center gap-2 text-green-400 text-sm">
+                        <Check className="h-4 w-4" />
+                        Screenshot uploaded successfully
+                      </div>
+                    )}
+                  </div>
                 )}
               </CldUploadWidget>
             </div>
@@ -629,8 +644,8 @@ export default function PlanFormModal({ isOpen, onClose, plan }: PlanFormModalPr
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                disabled={isSubmitting || !formData.paymentScreenshotUrl}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
               >
                 {isSubmitting ? "Submitting..." : "Submit Application"}
               </Button>

@@ -9,13 +9,12 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center mb-4">
               <span className="text-2xl font-bold">
-                <span className="bg-red-600 px-2 py-1">LOVE</span>
-                <span>CONNECT</span>
+                <span className="bg-red-600 px-2 py-1">DOWN</span>
+                <span>DATING</span>
               </span>
             </Link>
             <p className="text-gray-400 mb-4">
-              The most exciting dating experience in your city. Find your match at our events or through our premium
-              plans.
+              The most exciting dating experience in your city. Find your match through our premium dating plans.
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-gray-400 hover:text-red-500 transition-colors">
@@ -60,16 +59,16 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
             <address className="not-italic text-gray-400 space-y-2">
-              <p>123 Dating Street</p>
-              <p>Love City, LC 12345</p>
-              <p>Email: info@loveconnect.com</p>
-              <p>Phone: (123) 456-7890</p>
+              <p>Dwarka Sec 16C</p>
+              <p>New Delhi, India</p>
+              <p>Email: downdatingshow@gmail.com</p>
+              <p>Phone: +91 98765 43210</p>
             </address>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to our newsletter for the latest updates on events and special offers.
+              Subscribe to our newsletter for the latest updates on dating plans and special offers.
             </p>
             <form className="flex flex-col space-y-2">
               <input
@@ -87,7 +86,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} LoveConnect. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Downdating. All rights reserved.</p>
         </div>
       </div>
     </footer>

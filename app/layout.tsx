@@ -5,6 +5,7 @@ import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,6 +30,10 @@ export default function RootLayout({
             <Footer />
           </div>
         </ThemeProvider>
+           <Script
+    id="razorpay-checkout-js"
+    src="https://checkout.razorpay.com/v1/checkout.js"
+   />
       </body>
     </html>
   )
