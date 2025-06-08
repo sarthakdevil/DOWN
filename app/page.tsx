@@ -134,7 +134,7 @@ export default function Home() {
                 <div className="flex items-center mb-4">
                   <div className="mr-4">
                     <Image
-                      src={["/download-1.jpg", "/download (2).jpg", "/download (3).jpg"][item - 1]}
+                      src={["/download-1.jpg", "/download (2).jpg", "/download (1).jpg"][item - 1]}
                       alt="User"
                       width={60}
                       height={60}
