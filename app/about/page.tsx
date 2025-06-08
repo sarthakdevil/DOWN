@@ -18,11 +18,11 @@ export default function AboutPage() {
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Story</h1>
             <p className="text-xl text-white/80 mb-8 max-w-2xl">
-              DOWNDATING began as a fun experiment by a group of college students who noticed how many great connections
+              Downdating began as a fun experiment by a group of college students who noticed how many great connections
               were missed at campus events. What started as a small matchmaking initiative at college fests quickly
               turned into something bigger. We focused on creating meaningful matches based on shared vibes, interests,
               and real-life interactions—not just profiles. With each successful date, word spread, and what began as a
-              passion project grew into a thriving startup. Today, DOWNDATING continues to connect people authentically,
+              passion project grew into a thriving startup. Today, Downdating continues to connect people authentically,
               turning casual meetups into lasting stories.
             </p>
           </div>
@@ -36,13 +36,13 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
               <p className="text-gray-300 mb-4">
-                At DOWNDATING, we believe that love shouldn’t start with awkward swipes or cheesy bios—it should begin
+                At Downdating, we believe that love shouldn’t start with awkward swipes or cheesy bios—it should begin
                 with a spark, a smile, maybe even a bad joke at a college event. That’s how we started too—a bunch of
                 friends trying to match people up for fun at campus fests. But when we saw real connections blooming
                 (and even a few couples holding hands at the canteen), we knew we were onto something special.
               </p>
               <p className="text-gray-300 mb-4">
-                We’re here to bring the heart back into dating. DOWNDATING is all about real vibes, genuine moments, and
+                We’re here to bring the heart back into dating. Downdating is all about real vibes, genuine moments, and
                 helping people meet the way it should feel—easy, exciting, and a little bit magical. Whether it’s a
                 shared love for midnight chai, indie music, or terrible puns, we help people find matches that actually
                 click. No pressure, just possibilities.
@@ -127,16 +127,16 @@ export default function AboutPage() {
               <div className="h-[400px] relative">
                 <Image
                   src="/WhatsApp Image 2025-06-07 at 16.37.07_0b6863d6.jpg"
-                  alt="DOWNDATING Team"
+                  alt="Downdating Team"
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-3">The DOWNDATING Core Team</h3>
-                <p className="text-red-500 mb-4">Team DOWNDATING</p>
+                <h3 className="text-2xl font-bold text-white mb-3">The Downdating Core Team</h3>
+                <p className="text-red-500 mb-4">Team Downdating</p>
                 <p className="text-gray-400">
-                  What started as a casual conversation in a college canteen has now turned into DOWNDATING. Our
+                  What started as a casual conversation in a college canteen has now turned into Downdating. Our
                   founding team brings together expertise in psychology, technology, and event planning with a shared
                   passion for creating authentic connections. As college friends who saw too many people struggling with
                   traditional dating apps, we decided to build something different—a platform that celebrates real
@@ -164,7 +164,7 @@ export default function AboutPage() {
             {[
               {
                 quote:
-                  "After trying countless dating apps with no success, DOWNDATING's events changed everything. Meeting people face-to-face in a structured environment made all the difference. I met my fiancé at a speed dating night!",
+                  "After trying countless dating apps with no success, Downdating's events changed everything. Meeting people face-to-face in a structured environment made all the difference. I met my fiancé at a speed dating night!",
                 name: "Priya Sharma",
                 location: "Mumbai",
               },
@@ -176,7 +176,7 @@ export default function AboutPage() {
               },
               {
                 quote:
-                  "As an introvert, dating events seemed intimidating, but DOWNDATING's format made it easy to connect. The hosts were fantastic at making everyone feel comfortable. I'm now dating someone I met at a wine tasting event!",
+                  "As an introvert, dating events seemed intimidating, but Downdating's format made it easy to connect. The hosts were fantastic at making everyone feel comfortable. I'm now dating someone I met at a wine tasting event!",
                 name: "Meera Kapoor",
                 location: "Bangalore",
               },
@@ -205,7 +205,7 @@ export default function AboutPage() {
       <section className="py-16 bg-black">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Join the DOWNDATING Community</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Join the Downdating Community</h2>
             <p className="text-xl text-white/80 mb-8">
               Whether you're looking for a serious relationship or just want to meet new people, we're here to help you
               connect.

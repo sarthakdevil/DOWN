@@ -134,7 +134,7 @@ export default function Home() {
                 <div className="flex items-center mb-4">
                   <div className="mr-4">
                     <Image
-                      src={`/placeholder.svg?height=80&width=80&text=User`}
+                      src={["/download-1.jpg", "/download (2).jpg", "/download (3).jpg"][item - 1]}
                       alt="User"
                       width={60}
                       height={60}

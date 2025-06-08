@@ -54,7 +54,7 @@ export default function Footer() {
             <address className="not-italic text-gray-400 space-y-2">
               <p>Dwarka Sec 16C</p>
               <p>New Delhi, India</p>
-              <p>Email: downdatingshow@gmail.com</p>
+              <p>Email: Downdatingshow@gmail.com</p>
               <p>Phone: +91 92113 18912</p>
             </address>
           </div>

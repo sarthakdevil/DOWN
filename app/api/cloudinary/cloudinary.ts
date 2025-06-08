@@ -12,7 +12,7 @@ export async function uploadToCloudinary(base64File: string) {
   try {
     // Upload to Cloudinary
     const uploadResponse = await cloudinary.v2.uploader.upload(`data:image/jpeg;base64,${base64File}`, {
-      folder:  "downdating/payment-screenshots", // Change folder as needed
+      folder:  "Downdating/payment-screenshots", // Change folder as needed
     });
 
     return uploadResponse.secure_url; // Return Cloudinary URL
