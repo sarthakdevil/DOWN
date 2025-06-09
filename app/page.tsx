@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Heart,Instagram,Linkedin } from "lucide-react"
+import { Heart, Instagram, Linkedin } from "lucide-react"
 
 export default function Home() {
   return (
@@ -51,6 +51,78 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Instagram Option - Regular Plans */}
+            <div className="rounded-lg overflow-hidden border border-gray-800 bg-gray-900 relative group hover:border-pink-500 transition-colors">
+              <div className="p-8 text-center">
+                <div className="flex justify-center mb-6">
+                  <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 p-4 rounded-full">
+                    <Instagram className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Instagram Dating</h3>
+                <p className="text-gray-400 mb-6">
+                  Perfect for everyone looking to find meaningful connections. Choose from various plans based on your
+                  preferences and timeline.
+                </p>
+                <ul className="space-y-3 mb-8 text-left">
+                  <li className="flex items-center text-gray-300">
+                    <svg
+                      className="h-5 w-5 text-pink-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Special pricing for girls
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <svg
+                      className="h-5 w-5 text-pink-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Fast matching options
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <svg
+                      className="h-5 w-5 text-pink-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Affordable plans
+                  </li>
+                  <li className="flex items-center text-gray-300">
+                    <svg
+                      className="h-5 w-5 text-pink-500 mr-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Community access
+                  </li>
+                </ul>
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:from-purple-600 hover:via-pink-600 hover:to-orange-600 text-white"
+                  asChild
+                >
+                  <Link href="/insta-plans">View Instagram Plans</Link>
+                </Button>
+              </div>
+            </div>
+
             {/* LinkedIn Option - Corporate Plans */}
             <div className="rounded-lg overflow-hidden border border-gray-800 bg-gray-900 relative group hover:border-blue-500 transition-colors">
               <div className="p-8 text-center">
@@ -115,85 +187,14 @@ export default function Home() {
                   </li>
                 </ul>
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" asChild>
-                  <Link href="/corporate-plans">View Corporate Plans</Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* Instagram Option - Regular Plans */}
-            <div className="rounded-lg overflow-hidden border border-gray-800 bg-gray-900 relative group hover:border-pink-500 transition-colors">
-              <div className="p-8 text-center">
-                <div className="flex justify-center mb-6">
-                  <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 p-4 rounded-full">
-                    <Instagram className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-4">General Dating</h3>
-                <p className="text-gray-400 mb-6">
-                  Perfect for everyone looking to find meaningful connections. Choose from various plans based on your
-                  preferences and timeline.
-                </p>
-                <ul className="space-y-3 mb-8 text-left">
-                  <li className="flex items-center text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-pink-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Special pricing for girls
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-pink-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Fast matching options
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-pink-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Affordable plans
-                  </li>
-                  <li className="flex items-center text-gray-300">
-                    <svg
-                      className="h-5 w-5 text-pink-500 mr-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Community access
-                  </li>
-                </ul>
-                <Button
-                  className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 hover:from-purple-600 hover:via-pink-600 hover:to-orange-600 text-white"
-                  asChild
-                >
-                  <Link href="/general-plans">View General Plans</Link>
+                  <Link href="/linkedin-plans">View LinkedIn Plans</Link>
                 </Button>
               </div>
             </div>
           </div>
         </div>
       </section>
+
       {/* Testimonials */}
       <section className="py-16 bg-gray-900">
         <div className="container">
@@ -210,7 +211,9 @@ export default function Home() {
                 <div className="flex items-center mb-4">
                   <div className="mr-4">
                     <Image
-                      src={["/download-1.jpg", "/download (2).jpg", "/download (1).jpg"][item - 1]}
+                      src={
+                        ["/download-1.jpg", "/download (2).jpg", "/download (1).jpg"][item - 1] || "/placeholder.svg"
+                      }
                       alt="User"
                       width={60}
                       height={60}
