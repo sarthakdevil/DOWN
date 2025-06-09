@@ -271,22 +271,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Featured In */}
-      <section className="py-12 bg-black">
-        <div className="container">
-          <div className="text-center mb-8">
-            <p className="text-gray-400 text-sm uppercase tracking-wider">Featured In</p>
-          </div>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            {["DatingAdvice.com", "eHarmony", "Match.com", "The Knot", "Brides"].map((brand) => (
-              <div key={brand} className="text-gray-500 text-xl md:text-2xl font-serif">
-                {brand}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
