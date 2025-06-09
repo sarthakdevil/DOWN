@@ -127,8 +127,15 @@ export default function Home() {
             <div className="rounded-lg overflow-hidden border border-gray-800 bg-gray-900 relative group hover:border-blue-500 transition-colors">
               <div className="p-8 text-center">
                 <div className="flex justify-center mb-6">
-                  <div className="bg-blue-600 p-4 rounded-full">
-                    <Linkedin className="h-8 w-8 text-white" />
+                  <div className="bg-blue-600 p-4 rounded-md">
+<svg
+  className="h-8 w-8 text-white"
+  fill="currentColor"
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.27 2.3-2.6 4.73-2.6 5.06 0 5.97 3.33 5.97 7.66V24h-5V15.4c0-2.07-.04-4.73-2.88-4.73-2.88 0-3.32 2.25-3.32 4.58V24h-5V8z"/>
+</svg>
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4">Corporate Professionals</h3>
