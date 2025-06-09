@@ -141,7 +141,7 @@ export default function Home() {
                 <h3 className="text-2xl font-bold text-white mb-4">Corporate Professionals</h3>
                 <p className="text-gray-400 mb-6">
                   Exclusive matching service designed for working professionals. Connect with like-minded individuals in
-                  your field and expand your network.
+                  your field and meet your date.
                 </p>
                 <ul className="space-y-3 mb-8 text-left">
                   <li className="flex items-center text-gray-300">
