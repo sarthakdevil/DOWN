@@ -194,7 +194,7 @@ export default function Home() {
                   </li>
                 </ul>
                 <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" asChild>
-                  <Link href="/linkedin-plans">View LinkedIn Plans</Link>
+                  <Link href="/Linkedin-plans">View LinkedIn Plans</Link>
                 </Button>
               </div>
             </div>
