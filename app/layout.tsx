@@ -10,7 +10,7 @@ import Script from 'next/script';
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "LoveConnect | Find Your Match",
+  title: "Mulaquat junction | Find Your Match",
   description: "The most exciting dating experience in your city",
     generator: 'v0.dev'
 }
