@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Link href="/" className="flex items-center mb-4">
-            <Image src="/logo.jpg" alt="alt" width={60} height={60} />
+              <Image src="/logo.jpg" alt="alt" width={60} height={60} />
             </Link>
             <p className="text-gray-400 mb-4">
               The most exciting dating experience in your city. Find your match through our premium dating plans.
@@ -79,7 +79,12 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Downdating. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Downdating. All rights reserved. |{" "}
+            <Link href="/privacy" className="hover:text-red-500 transition-colors underline">
+              Read our Privacy Policy
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
