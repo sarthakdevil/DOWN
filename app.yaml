@@ -1,0 +1,4 @@
+runtime: nodejs22
+
+env_variables:
+  DATABASE_URL: 'postgresql://downdating_owner:npg_cWaj5TJbpmC3@ep-billowing-base-a8hefnep-pooler.eastus2.azure.neon.tech/downdating?sslmode=require&channel_binding=require'

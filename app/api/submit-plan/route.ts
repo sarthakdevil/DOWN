@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { neon } from "@neondatabase/serverless"
 
-const sql = neon(process.env.DATABASE_URL!)
+// const sql = neon(process.env.DATABASE_URL!)
+const sql = neon("postgresql://downdating_owner:npg_cWaj5TJbpmC3@ep-billowing-base-a8hefnep-pooler.eastus2.azure.neon.tech/downdating?sslmode=require&channel_binding=require")
 
 export async function POST(request: NextRequest) {
   try {
