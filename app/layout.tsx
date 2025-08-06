@@ -22,6 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="afterInteractive"
+        />
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <div className="flex min-h-screen flex-col">
@@ -30,10 +34,6 @@ export default function RootLayout({
             <Footer />
           </div>
         </ThemeProvider>
-           <Script
-    id="razorpay-checkout-js"
-    src="https://checkout.razorpay.com/v1/checkout.js"
-   />
       </body>
     </html>
   )
