@@ -1,84 +1,6 @@
 {
   "plans": [
     {
-      "id": "girls-match",
-      "title": "Downdating Match (Form for GIRLS Only)",
-      "price": 49,
-      "originalPrice": 99,
-      "currency": "INR",
-      "period": "one-time",
-      "description": "Special pricing for girls. Get matched with compatible singles and start your dating journey.",
-      "features": [
-        "Unlimited matches",
-        "Enhanced profile customization",
-        "Chat with matches",
-        "Priority support",
-        "Access to dating tips",
-        "Profile verification"
-      ],
-      "popular": true,
-      "color": "red"
-    },
-    {
-      "id": "men-24-hours",
-      "title": "Downdating Match Under 24 Hours (For Men)",
-      "price": 299,
-      "originalPrice": 399,
-      "currency": "INR",
-      "period": "one-time",
-      "description": "Premium fast-track matching for men. Get matched within 24 hours with our priority algorithm.",
-      "features": [
-        "Guaranteed match within 24 hours",
-        "Premium profile placement",
-        "Priority matching algorithm",
-        "Video chat with matches",
-        "Personal dating coach consultation",
-        "See who liked your profile",
-        "24/7 priority support"
-      ],
-      "popular": false,
-      "color": "gold"
-    },
-    {
-      "id": "men-3-days",
-      "title": "Downdating Match Under 3 Days (For Men)",
-      "price": 199,
-      "originalPrice": 299,
-      "currency": "INR",
-      "period": "one-time",
-      "description": "Fast matching for men. Get quality matches within 3 days with enhanced features.",
-      "features": [
-        "Guaranteed match within 3 days",
-        "Enhanced profile visibility",
-        "Priority matching",
-        "Chat with matches",
-        "Dating tips and guidance",
-        "Profile verification",
-        "Email support"
-      ],
-      "popular": false,
-      "color": "blue"
-    },
-    {
-      "id": "men-regular",
-      "title": "Downdating Regular Match (For Men)",
-      "price": 109,
-      "originalPrice": 149,
-      "currency": "INR",
-      "period": "one-time",
-      "description": "Affordable option for men. Regular matching process with essential features to find your match.",
-      "features": [
-        "Regular matching process",
-        "Basic profile customization",
-        "Chat with matches",
-        "Standard support",
-        "Access to dating community",
-        "Basic profile verification"
-      ],
-      "popular": false,
-      "color": "gray"
-    },
-    {
       "id":"corporate-match for professionals(For Women)",
       "title": "Downdating Corporate Match (For Professionals)",
       "price": 499,
@@ -97,7 +19,7 @@
         "Profile verification"
       ],
       "popular": false,
-      "color": "purple"
+      "color": "red"
     },
     {
       "id": "corporate-match for professionals(For Men)",
