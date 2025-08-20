@@ -1,121 +1,304 @@
+"use client"
+
+import { useState } from "react"
+import plansData from "@/data/plans.json"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Heart, Instagram, Linkedin } from "lucide-react"
+import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag } from "lucide-react"
+import { useCart } from "@/contexts/cart-context"
+import { useTheme } from "@/contexts/theme-context"
+import { cn } from "@/lib/utils"
 
 export default function Home() {
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
+  const { dispatch } = useCart()
+  const { theme } = useTheme()
+
+  // Load plans from data/plans.json
+  const plans = plansData.plans
+
+  const faqItems = [
+    {
+      question: "How does the matching process work?",
+      answer:
+        "Our advanced algorithm analyzes your preferences, interests, and compatibility factors to find the best matches for you. We consider over 100 different parameters to ensure quality connections.",
+    },
+    {
+      question: "What makes DownDating different from other dating apps?",
+      answer:
+        "DownDating focuses on meaningful connections rather than endless swiping. We offer personalized matching, verified profiles, and both online and offline dating experiences.",
+    },
+    {
+      question: "How quickly will I get matched?",
+      answer:
+        "Depending on your chosen plan, you can get matched within 24 hours, 3 days, or through our regular matching process. Premium plans offer faster matching with priority placement.",
+    },
+    {
+      question: "Is my personal information safe and secure?",
+      answer:
+        "Yes, we take privacy and security very seriously. All profiles are verified, and we use advanced encryption to protect your personal data. You have full control over who can see your profile.",
+    },
+    {
+      question: "Can I cancel my subscription anytime?",
+      answer:
+        "Yes, you can cancel your subscription at any time. There are no long-term commitments, and you'll continue to have access to your plan until the end of your current billing period.",
+    },
+    {
+      question: "Do you offer refunds if I'm not satisfied?",
+      answer:
+        "We offer a satisfaction guarantee. If you don't find meaningful connections within your first month, we'll work with you to improve your experience or provide a refund based on our terms.",
+    },
+  ]
+
+  const toggleFAQ = (index: number) => {
+    setExpandedFAQ(expandedFAQ === index ? null : index)
+  }
+
+  const addToCart = (plan: (typeof plans)[0]) => {
+    dispatch({
+      type: "ADD_ITEM",
+      payload: {
+        id: plan.id,
+        title: plan.title,
+        price: plan.price,
+        // icon, category, href are not in plans.json, so skip or use fallback
+        icon: plan.color ? plan.color.charAt(0).toUpperCase() : plan.title.charAt(0),
+        category: plan.period || "Plan",
+        href: plan.googleFormUrl,
+      },
+    })
+  }
+
   return (
-    <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative h-[90vh] overflow-hidden">
-        <div className="absolute inset-0 bg-black/70 z-10"></div>
+    <div
+      className={cn(
+        "min-h-screen transition-colors duration-300",
+        theme === "dark" ? "bg-[#212121] text-white" : "bg-white text-gray-900",
+      )}
+    >
+      {/* Hero Section with Integrated Stats */}
+      <section className="relative h-[85vh] overflow-hidden rounded-2xl mx-4 mt-4">
+        <div className="absolute inset-0 bg-black/60 z-10 rounded-2xl"></div>
         <Image
           src="/WhatsApp Image 2025-06-07 at 16.34.57_20ca118e.jpg"
-          alt="Dating event background"
+          alt="Dating background"
           fill
-          className="object-cover brightness-50"
+          className="object-cover rounded-2xl"
           priority
         />
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
-          <div className="flex items-center justify-center mb-6">
-            <Heart className="h-8 w-8 text-red-600 fill-red-600 mr-2" />
-            <Heart className="h-6 w-6 text-red-600 fill-red-600" />
-          </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 tracking-tight">
-            THE MOST EXCITING <br /> DATING EXPERIENCE
-          </h1>
-          <p className="text-xl md:text-2xl text-white/80 mb-8 max-w-3xl">
-            Find your perfect match with our exclusive dating plans.
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">Down to find your other half?</h1>
+          <h2 className="text-4xl md:text-6xl font-bold text-red-600 mb-2">DownDating</h2>
+          <p className="text-lg text-white/80 mb-4">is here for you</p>
+          <p className="text-sm text-white/70 mb-8 max-w-md">
+            Whatever text which was on the previous website, but I was down the whole day
           </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white/10 text-lg px-8"
-              asChild
+          <Button className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-full font-medium mb-16" asChild>
+            <Link href="/plans">Explore plan for Show</Link>
+          </Button>
+        </div>
+
+        {/* Stats Cards - Positioned at bottom of hero */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-4xl px-4">
+          <div className="flex flex-wrap justify-center gap-4">
+            <div
+              className={cn(
+                "backdrop-blur-sm rounded-2xl p-4 text-center min-w-[140px] border",
+                theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
+              )}
             >
-              <Link href="/plans">View Plans</Link>
-            </Button>
+              <div className="flex items-center justify-center mb-1">
+                <Star className="h-5 w-5 text-yellow-500 fill-yellow-500 mr-1" />
+                <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>3.91</span>
+                <span className="text-gray-400 ml-1">(47)</span>
+              </div>
+              <p className="text-red-500 text-sm font-medium">Ratings</p>
+            </div>
+            <div
+              className={cn(
+                "backdrop-blur-sm rounded-2xl p-4 text-center min-w-[140px] border",
+                theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
+              )}
+            >
+              <div className="flex items-center justify-center mb-1">
+                <ShoppingBag className="h-5 w-5 text-purple-500 mr-1" />
+                <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>351</span>
+              </div>
+              <p className="text-red-500 text-sm font-medium">Orders</p>
+            </div>
+            <div
+              className={cn(
+                "backdrop-blur-sm rounded-2xl p-4 text-center min-w-[140px] border",
+                theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
+              )}
+            >
+              <div className="flex items-center justify-center mb-1">
+                <Heart className="h-5 w-5 text-red-500 fill-red-500 mr-1" />
+                <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>75</span>
+              </div>
+              <p className="text-red-500 text-sm font-medium">Loved This</p>
+            </div>
           </div>
         </div>
       </section>
 
-
-      {/* Testimonials */}
-      <section className="py-16 bg-gradient-to-b from-black to-gray-900">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Success Stories</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Hear from couples who found love through our dating plans.
-            </p>
+      {/* Plans Section */}
+      <section className="py-12 px-4 mt-8">
+        <div className="container mx-auto">
+          <div className="flex items-center mb-8">
+            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>Plans</h2>
+            <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((item) => (
-              <div key={item} className="bg-black p-6 rounded-lg border border-gray-800">
-                <div className="flex items-center mb-4">
-                  <div className="mr-4">
-                    <Image
-                      src={
-                        ["/download-1.jpg", "/download (2).jpg", "/download (1).jpg"][item - 1] || "/placeholder.svg"
-                      }
-                      alt="User"
-                      width={60}
-                      height={60}
-                      className="rounded-full"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-white">
-                      {["Shreya and Aman", "Riya and Kabir", "Neha and Rahul"][item - 1]}
-                    </h4>
-                    <p className="text-gray-400">{["Delhi", "Mumbai", "Bangalore"][item - 1]}</p>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {plans.map((plan) => (
+              <div
+                key={plan.id}
+                className={cn(
+                  "backdrop-blur-sm rounded-2xl p-6 border transition-colors duration-300",
+                  theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+                )}
+              >
+                <div className={`flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto ${plan.color === 'gold' ? 'bg-yellow-400' : plan.color === 'red' ? 'bg-red-600' : 'bg-gray-400'}`}>
+                  <span className="text-white font-bold text-sm">{plan.title.charAt(0)}</span>
                 </div>
-                <p className="text-gray-300">
-                  {
-                    [
-                      "We met through the Basic Match plan and instantly connected. After 6 months of dating, we're now engaged!",
-                      "The Premium Connect plan matched us perfectly. We've been together for a year now and couldn't be happier.",
-                      "The Elite Romance plan and personal matchmaker found us the perfect match. We're celebrating our 6-month anniversary next week!",
-                    ][item - 1]
-                  }
-                </p>
+                <h3
+                  className={cn(
+                    "text-xl font-bold mb-3 text-center",
+                    theme === "dark" ? "text-white" : "text-gray-900",
+                  )}
+                >
+                  {plan.title}
+                </h3>
+                <p className="text-gray-400 text-sm mb-6 text-center leading-relaxed">{plan.description}</p>
+                <div className="text-center mb-6">
+                  <span className={cn("text-2xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+                    ₹{plan.price}
+                  </span>
+                </div>
+                <Button
+                  onClick={() => addToCart(plan)}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full py-3 font-medium"
+                >
+                  Add to Cart
+                </Button>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/70 z-10"></div>
-        <Image
-          src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg"
-          alt="CTA background"
-          fill
-          className="object-cover brightness-25"
-        />
-        <div className="container relative z-20">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center mb-6">
-              <Heart className="h-8 w-8 text-red-600 fill-red-600 mr-2" />
-              <Heart className="h-6 w-6 text-red-600 fill-red-600" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Find Your Perfect Match?</h2>
-            <p className="text-xl text-white/80 mb-8">
-              Join thousands of singles who have found love through our dating plans.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10 text-lg px-8"
-                asChild
+      {/* Visits Section */}
+      <section className="py-12 px-4">
+        <div className="container mx-auto">
+          <div className="flex items-center mb-8">
+            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>Visits</h2>
+            <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
+          </div>
+
+          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-4">
+            {Array.from({ length: 9 }, (_, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "backdrop-blur-sm rounded-2xl p-4 text-center border transition-colors duration-300",
+                  theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+                )}
               >
-                <Link href="/plans">View Plans</Link>
-              </Button>
+                <div className={cn("font-bold text-lg mb-1", theme === "dark" ? "text-white" : "text-gray-900")}>
+                  24
+                </div>
+                <div className="text-red-600 font-bold text-sm tracking-wider">JUL</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQs Section */}
+      <section className="py-12 px-4">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="relative h-80 rounded-2xl overflow-hidden">
+              <Image
+                src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg"
+                alt="FAQs background"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <h2 className="text-6xl font-bold text-red-600">FAQs</h2>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {faqItems.map((item, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "backdrop-blur-sm rounded-2xl border overflow-hidden transition-colors duration-300",
+                    theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
+                  )}
+                >
+                  <button
+                    onClick={() => toggleFAQ(index)}
+                    className={cn(
+                      "w-full p-4 flex items-center justify-between transition-colors text-left",
+                      theme === "dark" ? "hover:bg-[#2a2a2a]/50" : "hover:bg-gray-50/50",
+                    )}
+                  >
+                    <span className={cn("font-medium", theme === "dark" ? "text-white" : "text-gray-900")}>
+                      {item.question}
+                    </span>
+                    {expandedFAQ === index ? (
+                      <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0 ml-2" />
+                    ) : (
+                      <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 ml-2" />
+                    )}
+                  </button>
+                  {expandedFAQ === index && (
+                    <div className="px-4 pb-4">
+                      <p className="text-gray-400 text-sm leading-relaxed">{item.answer}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="relative py-16 px-4 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="WhatsApp Image 2025-06-07 at 16.34.56_14e1be12.jpg"
+            alt="Contact background"
+            fill
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-black/70"></div>
+        </div>
+
+        <div className="container mx-auto text-center relative z-10">
+          <h2 className="text-2xl font-bold text-white mb-2">Want to enquire about anything else or</h2>
+          <h3 className="text-2xl font-bold text-white mb-8">want to contact our team?</h3>
+
+          <div className="space-y-4 max-w-md mx-auto">
+            <div className="flex items-center justify-center text-gray-300">
+              <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+              <span>Gurgaon Jhirka Sector-16</span>
+            </div>
+            <div className="flex items-center justify-center text-gray-300">
+              <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+              <a href="mailto:Downdating@gmail.com" className="hover:text-white transition-colors">
+                Downdating@gmail.com
+              </a>
+            </div>
+            <div className="flex items-center justify-center text-gray-300">
+              <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
+              <span>24/7 (365 Days)</span>
             </div>
           </div>
         </div>
