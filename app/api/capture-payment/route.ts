@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import Razorpay from 'razorpay'
+import Razorpay from "razorpay"
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -10,20 +10,17 @@ export async function POST(request: NextRequest) {
   try {
     const { paymentId, amount } = await request.json()
 
-    const response = await razorpay.payments.capture(paymentId, amount * 100, 'INR')
-    
-    console.log('Razorpay payment captured:', {
+    const response = await razorpay.payments.capture(paymentId, amount * 100, "INR")
+
+    console.log("Razorpay payment captured:", {
       paymentId: response.id,
       amount: response.amount,
-      status: response.status
+      status: response.status,
     })
-    
+
     return NextResponse.json({ success: true, payment: response })
   } catch (error) {
-    console.error('Payment capture failed:', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to capture payment' },
-      { status: 500 }
-    )
+    console.error("Payment capture failed:", error)
+    return NextResponse.json({ success: false, error: "Failed to capture payment" }, { status: 500 })
   }
 }

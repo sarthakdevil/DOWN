@@ -1,0 +1,20 @@
+[
+    {
+        "id": "BLACKFRIDAY",
+        "code": "BLACKFRIDAY",
+        "description": "Get 20% off on all plans this Black Friday!",
+        "discount": 20
+    },
+    {
+        "id": "NEWYEAR",
+        "code": "NEWYEAR",
+        "description": "Start the new year with a fresh match! Get 15% off.",
+        "discount": 15
+    },
+    {
+        "id": "VALENTINES",
+        "code": "VALENTINES",
+        "description": "Celebrate love with 25% off on all plans for Valentine's Day!",
+        "discount": 25
+    }
+]

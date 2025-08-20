@@ -58,6 +58,14 @@ const config = {
           600: "#dc2626",
           700: "#b91c1c",
         },
+        // Custom brand colors
+        brand: {
+          primary: "#212121", // Primary background
+          secondary: "#121212", // FAQ and Our Mission sections
+          navbar: "#191919", // Header/navbar
+          card: "#2a2a2a", // Card backgrounds
+          border: "#333333", // Border colors
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

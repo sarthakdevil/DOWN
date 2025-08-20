@@ -7,12 +7,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-    ],
+    domains: ['res.cloudinary.com'],
+    unoptimized: true,
   },
 }
 

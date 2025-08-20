@@ -1,223 +1,216 @@
+"use client"
+
 import Image from "next/image"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ChevronLeft, Shield, Heart, Lightbulb, Star, Smile } from "lucide-react"
+import { useTheme } from "@/contexts/theme-context"
+import { cn } from "@/lib/utils"
 
 export default function AboutPage() {
+  const { theme } = useTheme()
+
   return (
-    <div className="bg-black min-h-screen">
-      {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-black/70 z-10"></div>
+    <div
+      className={cn(
+        "min-h-screen transition-colors duration-300",
+        theme === "dark" ? "bg-[#212121] text-white" : "bg-white text-gray-900",
+      )}
+    >
+      {/* Back Button */}
+      <div className="px-4 pt-4">
+        <Link href="/" className="inline-flex items-center text-red-600 hover:text-red-500 transition-colors">
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          <span className="font-medium">Back</span>
+        </Link>
+      </div>
+
+      {/* Our Story Section */}
+      <section className="relative mx-4 mt-6 mb-8 rounded-2xl overflow-hidden">
+        <div className="absolute inset-0 bg-black/60 z-10"></div>
         <Image
           src="/WhatsApp Image 2025-06-07 at 16.34.57_20ca118e.jpg"
-          alt="About Us background"
+          alt="Our Story background"
           fill
-          className="object-cover brightness-50"
+          className="object-cover"
+          priority
         />
-        <div className="container relative z-20">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Story</h1>
-            <p className="text-xl text-white/80 mb-8 max-w-2xl">
+        <div className="relative z-20 p-8 md:p-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-red-600 mb-8">Our Story</h1>
+          <div className="max-w-4xl space-y-6">
+            <p className="text-white text-lg leading-relaxed">
               Downdating began as a fun experiment by a group of college students who noticed how many great connections
               were missed at campus events. What started as a small matchmaking initiative at college fests quickly
-              turned into something bigger. We focused on creating meaningful matches based on shared vibes, interests,
-              and real-life interactions—not just profiles. With each successful date, word spread, and what began as a
-              passion project grew into a thriving startup. Today, Downdating continues to connect people authentically,
-              turning casual meetups into lasting stories.
+              turned into something bigger.
+            </p>
+            <p className="text-white text-lg leading-relaxed">
+              We focused on creating meaningful matches based on shared vibes, interests, and real-life interactions—not
+              just profiles. With each successful date, word spread, and what began as a passion project grew into a
+              thriving startup. Today, Downdating continues to connect people authentically, turning casual meetups into
+              lasting stories.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Mission */}
-      <section className="py-16">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
-              <p className="text-gray-300 mb-4">
-                At Downdating, we believe that love shouldn’t start with awkward swipes or cheesy bios—it should begin
-                with a spark, a smile, maybe even a bad joke at a college event. That’s how we started too—a bunch of
-                friends trying to match people up for fun at campus fests. But when we saw real connections blooming
-                (and even a few couples holding hands at the canteen), we knew we were onto something special.
+      {/* Our Mission Section */}
+      <section
+        className={cn(
+          "mx-4 mb-12 rounded-2xl p-8 md:p-12 border transition-colors duration-300",
+          theme === "dark" ? "bg-[#121212] border-[#333333]" : "bg-gray-50 border-gray-200",
+        )}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-bold text-red-600 mb-8">Our Mission</h2>
+            <div className={cn("space-y-4", theme === "dark" ? "text-white" : "text-gray-900")}>
+              <p className="leading-relaxed">
+                At Downdating, we believe that love shouldn't start with awkward swipes or cheesy bios—it should begin
+                with a spark, a simple even a bad joke at a college event. That's how we started too—a bunch of friends
+                trying to match people up for fun at campus fests. But when we saw real connections blooming (and even a
+                few couples holding hands at the canteen), we knew we were onto something special.
               </p>
-              <p className="text-gray-300 mb-4">
-                We’re here to bring the heart back into dating. Downdating is all about real vibes, genuine moments, and
-                helping people meet the way it should feel—easy, exciting, and a little bit magical. Whether it’s a
+              <p className="leading-relaxed">
+                We're here to bring the heart back into dating. Downdating is all about real vibes, genuine moments, and
+                helping people meet the way it should feel—easy, exciting, and a little bit magical. Whether it's a
                 shared love for midnight chai, indie music, or terrible puns, we help people find matches that actually
                 click. No pressure, just possibilities.
               </p>
-              <p className="text-gray-300">
+              <p className="leading-relaxed">
                 Our mission is simple: to turn casual meetups into sweet memories, and sparks into something more. We
                 want to make dating feel natural, warm, and full of little butterflies again. Because honestly? Everyone
-                deserves a cute “how we met” story—and we’re here to help you write yours. 
+                deserves a cute "how we met" story—and we're here to help you write yours.
               </p>
             </div>
-            <div className="relative h-[400px] rounded-lg overflow-hidden">
-              <Image
-                src="/WhatsApp Image 2025-06-07 at 16.34.59_78ad2dd5.jpg"
-                alt="Our Mission"
-                fill
-                className="object-cover"
-              />
+          </div>
+          <div className="relative h-80 lg:h-96 rounded-2xl overflow-hidden">
+            <Image
+              src="/placeholder.svg?height=400&width=600&text=Campus Event Photo"
+              alt="Campus event with students holding colorful signs"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Our Core Values Section */}
+      <section className="px-4 pb-12">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold text-red-600">Our Core Values</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {/* Authenticity */}
+          <div
+            className={cn(
+              "backdrop-blur-sm rounded-2xl p-6 border text-center transition-colors duration-300",
+              theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+            )}
+          >
+            <div
+              className={cn(
+                "flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto",
+                theme === "dark" ? "bg-gray-700" : "bg-gray-200",
+              )}
+            >
+              <Shield className={cn("h-8 w-8", theme === "dark" ? "text-gray-300" : "text-gray-600")} />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="py-16 bg-gradient-to-b from-black to-gray-900">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-white mb-12 text-center">Our Core Values</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Authenticity",
-                description:
-                  "We believe in real connections between real people. Our platform and events are designed to showcase your authentic self.",
-                icon: "🤝",
-              },
-              {
-                title: "Inclusivity",
-                description:
-                  "Love is for everyone. We create a welcoming environment for people of all backgrounds, orientations, and relationship goals.",
-                icon: "❤️",
-              },
-              {
-                title: "Innovation",
-                description:
-                  "We're constantly evolving our approach to dating, combining the best of technology with meaningful in-person experiences.",
-                icon: "💡",
-              },
-              {
-                title: "Safety",
-                description:
-                  "Your safety is our priority. We verify profiles, moderate our community, and create secure spaces for you to connect.",
-                icon: "🔒",
-              },
-              {
-                title: "Quality",
-                description:
-                  "We focus on quality connections rather than endless swiping. Our matching algorithms and event formats are designed for meaningful interactions.",
-                icon: "⭐",
-              },
-              {
-                title: "Fun",
-                description:
-                  "Dating should be enjoyable! We create experiences that are fun, engaging, and take the pressure off meeting new people.",
-                icon: "🎉",
-              },
-            ].map((value, index) => (
-              <div key={index} className="bg-black p-6 rounded-lg border border-gray-800">
-                <div className="text-3xl mb-4">{value.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
-                <p className="text-gray-400">{value.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-16 bg-gray-900">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-white mb-12 text-center">Meet Our Team</h2>
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-black rounded-lg overflow-hidden border border-gray-800">
-              <div className="h-[400px] relative">
-                <Image
-                  src="/WhatsApp Image 2025-06-07 at 16.37.07_0b6863d6.jpg"
-                  alt="Downdating Team"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-3">The Downdating Core Team</h3>
-                <p className="text-red-500 mb-4">Team Downdating</p>
-                <p className="text-gray-400">
-                  What started as a casual conversation in a college canteen has now turned into Downdating. Our
-                  founding team brings together expertise in psychology, technology, and event planning with a shared
-                  passion for creating authentic connections. As college friends who saw too many people struggling with
-                  traditional dating apps, we decided to build something different—a platform that celebrates real
-                  interactions and meaningful relationships. Together, we're on a mission to make dating feel natural,
-                  fun, and full of possibilities again.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-16 bg-black">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">What Our Members Say</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Don't just take our word for it. Hear from some of the thousands of singles who have found love through
-              LoveConnect.
+            <h3 className={cn("text-xl font-bold mb-4", theme === "dark" ? "text-white" : "text-gray-900")}>
+              Authenticity
+            </h3>
+            <p className={cn("text-sm leading-relaxed", theme === "dark" ? "text-gray-300" : "text-gray-600")}>
+              We believe in real connections between real people. Our platform and events are designed to showcase your
+              authentic self.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                quote:
-                  "After trying countless dating apps with no success, Downdating's events changed everything. Meeting people face-to-face in a structured environment made all the difference. I met my fiancé at a speed dating night!",
-                name: "Priya Sharma",
-                location: "Mumbai",
-              },
-              {
-                quote:
-                  "The Premium Connect plan matched me with exactly the kind of person I was looking for. The compatibility algorithm is incredible. We've been dating for 6 months now and things are going great.",
-                name: "Arjun Patel",
-                location: "Delhi",
-              },
-              {
-                quote:
-                  "As an introvert, dating events seemed intimidating, but Downdating's format made it easy to connect. The hosts were fantastic at making everyone feel comfortable. I'm now dating someone I met at a wine tasting event!",
-                name: "Meera Kapoor",
-                location: "Bangalore",
-              },
-              {
-                quote:
-                  "The personal matchmaker from the Elite plan took the time to understand what I was looking for. The quality of matches was far better than anything I experienced on other platforms. Worth every penny!",
-                name: "Vikram Singh",
-                location: "Hyderabad",
-              },
-            ].map((testimonial, index) => (
-              <div key={index} className="bg-gray-900 p-8 rounded-lg border border-gray-800">
-                <div className="flex flex-col h-full">
-                  <div className="text-4xl text-red-600 mb-4">"</div>
-                  <p className="text-gray-300 mb-6 flex-grow">{testimonial.quote}</p>
-                  <div>
-                    <p className="text-white font-semibold">{testimonial.name}</p>
-                    <p className="text-gray-400">{testimonial.location}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      {/* CTA */}
-      <section className="py-16 bg-black">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Join the Downdating Community</h2>
-            <p className="text-xl text-white/80 mb-8">
-              Whether you're looking for a serious relationship or just want to meet new people, we're here to help you
-              connect.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white" asChild>
-                <Link href="/">Go to home</Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
-                <Link href="/plans">View Plans</Link>
-              </Button>
+          {/* Inclusivity */}
+          <div
+            className={cn(
+              "backdrop-blur-sm rounded-2xl p-6 border text-center transition-colors duration-300",
+              theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+            )}
+          >
+            <div className="flex items-center justify-center w-16 h-16 bg-red-600 rounded-full mb-4 mx-auto">
+              <Heart className="h-8 w-8 text-white" />
             </div>
+            <h3 className={cn("text-xl font-bold mb-4", theme === "dark" ? "text-white" : "text-gray-900")}>
+              Inclusivity
+            </h3>
+            <p className={cn("text-sm leading-relaxed", theme === "dark" ? "text-gray-300" : "text-gray-600")}>
+              Love is for everyone. We create a welcoming environment for people of all backgrounds, orientations, and
+              relationship goals.
+            </p>
+          </div>
+
+          {/* Innovation */}
+          <div
+            className={cn(
+              "backdrop-blur-sm rounded-2xl p-6 border text-center transition-colors duration-300",
+              theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+            )}
+          >
+            <div className="flex items-center justify-center w-16 h-16 bg-yellow-500 rounded-full mb-4 mx-auto">
+              <Lightbulb className="h-8 w-8 text-black" />
+            </div>
+            <h3 className={cn("text-xl font-bold mb-4", theme === "dark" ? "text-white" : "text-gray-900")}>
+              Innovation
+            </h3>
+            <p className={cn("text-sm leading-relaxed", theme === "dark" ? "text-gray-300" : "text-gray-600")}>
+              We're constantly evolving our approach to dating, combining the best of technology with meaningful
+              in-person experiences.
+            </p>
+          </div>
+
+          {/* Safety */}
+          <div
+            className={cn(
+              "backdrop-blur-sm rounded-2xl p-6 border text-center transition-colors duration-300",
+              theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+            )}
+          >
+            <div className="flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4 mx-auto">
+              <Shield className="h-8 w-8 text-white" />
+            </div>
+            <h3 className={cn("text-xl font-bold mb-4", theme === "dark" ? "text-white" : "text-gray-900")}>Safety</h3>
+            <p className={cn("text-sm leading-relaxed", theme === "dark" ? "text-gray-300" : "text-gray-600")}>
+              Your safety is our priority. We verify profiles, moderate our community, and create secure spaces for you
+              to connect.
+            </p>
+          </div>
+
+          {/* Quality */}
+          <div
+            className={cn(
+              "backdrop-blur-sm rounded-2xl p-6 border text-center transition-colors duration-300",
+              theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+            )}
+          >
+            <div className="flex items-center justify-center w-16 h-16 bg-yellow-500 rounded-full mb-4 mx-auto">
+              <Star className="h-8 w-8 text-black" />
+            </div>
+            <h3 className={cn("text-xl font-bold mb-4", theme === "dark" ? "text-white" : "text-gray-900")}>Quality</h3>
+            <p className={cn("text-sm leading-relaxed", theme === "dark" ? "text-gray-300" : "text-gray-600")}>
+              We focus on quality connections rather than endless swiping. Our matching algorithms and event formats are
+              designed for meaningful interactions.
+            </p>
+          </div>
+
+          {/* Fun */}
+          <div
+            className={cn(
+              "backdrop-blur-sm rounded-2xl p-6 border text-center transition-colors duration-300",
+              theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+            )}
+          >
+            <div className="flex items-center justify-center w-16 h-16 bg-orange-500 rounded-full mb-4 mx-auto">
+              <Smile className="h-8 w-8 text-white" />
+            </div>
+            <h3 className={cn("text-xl font-bold mb-4", theme === "dark" ? "text-white" : "text-gray-900")}>Fun</h3>
+            <p className={cn("text-sm leading-relaxed", theme === "dark" ? "text-gray-300" : "text-gray-600")}>
+              Dating should be enjoyable! We create experiences that are fun, engaging, and take the pressure off
+              meeting new people.
+            </p>
           </div>
         </div>
       </section>
