@@ -95,7 +95,7 @@ export default function Home() {
             Whatever text which was on the previous website, but I was down the whole day
           </p>
           <Button className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-full font-medium mb-16" asChild>
-            <Link href="/plans">Explore plan for Show</Link>
+            <Link href="#plans">Explore plan for Show</Link>
           </Button>
         </div>
 
@@ -145,7 +145,7 @@ export default function Home() {
       <section className="py-12 px-4 mt-8">
         <div className="container mx-auto">
           <div className="flex items-center mb-8">
-            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>Plans</h2>
+            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">Plans</h2>
             <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
           </div>
 
