@@ -5,17 +5,17 @@ import plansData from "@/data/plans.json"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag } from "lucide-react"
+import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag, Check } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 
 export default function Home() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
-  const { dispatch } = useCart()
+  const [addedToCart, setAddedToCart] = useState<string | null>(null)
+  const { dispatch, state } = useCart()
   const { theme } = useTheme()
 
-  // Load plans from data/plans.json
   const plans = plansData.plans
 
   const faqItems = [
@@ -62,12 +62,13 @@ export default function Home() {
         id: plan.id,
         title: plan.title,
         price: plan.price,
-        // icon, category, href are not in plans.json, so skip or use fallback
         icon: plan.color ? plan.color.charAt(0).toUpperCase() : plan.title.charAt(0),
         category: plan.period || "Plan",
         href: plan.googleFormUrl,
       },
     })
+    setAddedToCart(plan.id)
+    setTimeout(() => setAddedToCart(null), 2000)
   }
 
   return (
@@ -77,7 +78,6 @@ export default function Home() {
         theme === "dark" ? "bg-[#212121] text-white" : "bg-white text-gray-900",
       )}
     >
-      {/* Hero Section with Integrated Stats */}
       <section className="relative h-[85vh] overflow-hidden rounded-2xl mx-4 mt-4">
         <div className="absolute inset-0 bg-black/60 z-10 rounded-2xl"></div>
         <Image
@@ -99,7 +99,6 @@ export default function Home() {
           </Button>
         </div>
 
-        {/* Stats Cards - Positioned at bottom of hero */}
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-4xl px-4">
           <div className="flex flex-wrap justify-center gap-4">
             <div
@@ -143,7 +142,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Plans Section */}
       <section className="py-12 px-4 mt-8">
         <div className="container mx-auto">
           <div className="flex items-center mb-8">
@@ -160,7 +158,9 @@ export default function Home() {
                   theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
                 )}
               >
-                <div className={`flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto ${plan.color === 'gold' ? 'bg-yellow-400' : plan.color === 'red' ? 'bg-red-600' : 'bg-gray-400'}`}>
+                <div
+                  className={`flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto ${plan.color === "gold" ? "bg-yellow-400" : plan.color === "red" ? "bg-red-600" : "bg-gray-400"}`}
+                >
                   <span className="text-white font-bold text-sm">{plan.title.charAt(0)}</span>
                 </div>
                 <h3
@@ -179,17 +179,43 @@ export default function Home() {
                 </div>
                 <Button
                   onClick={() => addToCart(plan)}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full py-3 font-medium"
+                  className={cn(
+                    "w-full rounded-full py-3 font-medium transition-all duration-300",
+                    addedToCart === plan.id
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-red-600 hover:bg-red-700 text-white",
+                  )}
                 >
-                  Add to Cart
+                  {addedToCart === plan.id ? (
+                    <div className="flex items-center justify-center">
+                      <Check className="h-4 w-4 mr-2" />
+                      Added to Cart!
+                    </div>
+                  ) : (
+                    "Add to Cart"
+                  )}
                 </Button>
+                {addedToCart === plan.id && (
+                  <div className="mt-3 md:hidden">
+                    <div
+                      className={cn(
+                        "flex items-center justify-center p-3 rounded-full text-sm font-medium animate-in slide-in-from-bottom-2 duration-300",
+                        theme === "dark"
+                          ? "bg-green-900/50 text-green-300 border border-green-700"
+                          : "bg-green-50 text-green-700 border border-green-200",
+                      )}
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      {plan.title} added to your cart
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Visits Section */}
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="flex items-center mb-8">
@@ -216,7 +242,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQs Section */}
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -269,7 +294,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section className="relative py-16 px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
@@ -303,6 +327,37 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {addedToCart && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 hidden md:block">
+          <div
+            className={cn(
+              "flex items-center px-6 py-3 rounded-full shadow-lg animate-in slide-in-from-bottom-4 duration-300",
+              theme === "dark" ? "bg-green-900 text-green-100 border border-green-700" : "bg-green-600 text-white",
+            )}
+          >
+            <Check className="h-5 w-5 mr-2" />
+            <span className="font-medium">{plans.find((p) => p.id === addedToCart)?.title} added to cart!</span>
+          </div>
+        </div>
+      )}
+
+      {state.items.length > 0 && (
+        <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
+          <Button
+            className={cn(
+              "w-full py-4 rounded-full font-medium shadow-lg animate-in slide-in-from-bottom-4 duration-300",
+              "bg-red-600 hover:bg-red-700 text-white",
+            )}
+            asChild
+          >
+            <Link href="/cart" className="flex items-center justify-center">
+              <ShoppingBag className="h-5 w-5 mr-2" />
+              Go to Cart ({state.items.length})
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
