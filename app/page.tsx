@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import plansData from "@/data/plans.json"
 import Image from "next/image"
 import Link from "next/link"
@@ -13,10 +13,43 @@ import { cn } from "@/lib/utils"
 export default function Home() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
   const [addedToCart, setAddedToCart] = useState<string | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [galleryIndex, setGalleryIndex] = useState(0)
   const { dispatch, state } = useCart()
   const { theme } = useTheme()
 
   const plans = plansData.plans
+    const galleryImages = [
+    "/romantic-couple-date.png",
+    "/placeholder-4gphe.png",
+    "/placeholder-6dmf4.png",
+    "/romantic-couple-date.png",
+    "/placeholder-4gphe.png",
+  ]
+
+  const reelsGallery = [
+    "/romantic-couple-date.png",
+    "/placeholder-4gphe.png",
+    "/placeholder-6dmf4.png",
+    "/romantic-couple-date.png",
+  ]
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % galleryImages.length)
+    }, 4000)
+
+    return () => clearInterval(interval)
+  }, [galleryImages.length])
+
+  const nextGalleryImage = () => {
+    setGalleryIndex((prevIndex) => (prevIndex + 1) % reelsGallery.length)
+  }
+
+  const prevGalleryImage = () => {
+    setGalleryIndex((prevIndex) => (prevIndex - 1 + reelsGallery.length) % reelsGallery.length)
+  }
+
 
   const faqItems = [
     {
@@ -87,56 +120,62 @@ export default function Home() {
           className="object-cover rounded-2xl"
           priority
         />
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4 pb-24 sm:pb-0">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2">Down to find your other half?</h1>
           <h2 className="text-4xl md:text-6xl font-bold text-red-600 mb-2">DownDating</h2>
           <p className="text-lg text-white/80 mb-4">is here for you</p>
           <p className="text-sm text-white/70 mb-8 max-w-md">
             Whatever text which was on the previous website, but I was down the whole day
           </p>
-          <Button className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-full font-medium mb-16" asChild>
+          <Button className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-full font-medium" asChild>
             <Link href="#plans">Explore plan for Show</Link>
           </Button>
         </div>
 
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-4xl px-4">
-          <div className="flex flex-wrap justify-center gap-4">
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-4xl px-4">
+          <div className="flex flex-wrap justify-center gap-1 sm:gap-4">
             <div
               className={cn(
-                "backdrop-blur-sm rounded-2xl p-4 text-center min-w-[140px] border",
+                "backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center min-w-[100px] sm:min-w-[140px] border",
                 theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
               )}
             >
               <div className="flex items-center justify-center mb-1">
-                <Star className="h-5 w-5 text-yellow-500 fill-yellow-500 mr-1" />
-                <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>3.91</span>
-                <span className="text-gray-400 ml-1">(47)</span>
+                <Star className="h-3 w-3 sm:h-5 sm:w-5 text-yellow-500 fill-yellow-500 mr-1" />
+                <span className={cn("text-sm sm:text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+                  4.7
+                </span>
+                <span className="text-gray-400 ml-1 text-xs">(47k+)</span>
               </div>
-              <p className="text-red-500 text-sm font-medium">Ratings</p>
+              <p className="text-red-500 text-xs font-medium">Ratings</p>
             </div>
             <div
               className={cn(
-                "backdrop-blur-sm rounded-2xl p-4 text-center min-w-[140px] border",
+                "backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center min-w-[100px] sm:min-w-[140px] border",
                 theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
               )}
             >
               <div className="flex items-center justify-center mb-1">
-                <ShoppingBag className="h-5 w-5 text-purple-500 mr-1" />
-                <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>351</span>
+                <ShoppingBag className="h-3 w-3 sm:h-5 sm:w-5 text-purple-500 mr-1" />
+                <span className={cn("text-sm sm:text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+                  10k+
+                </span>
               </div>
-              <p className="text-red-500 text-sm font-medium">Orders</p>
+              <p className="text-red-500 text-xs font-medium">Orders</p>
             </div>
             <div
               className={cn(
-                "backdrop-blur-sm rounded-2xl p-4 text-center min-w-[140px] border",
+                "backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center min-w-[100px] sm:min-w-[140px] border",
                 theme === "dark" ? "bg-[#121212]/90 border-[#333333]" : "bg-white/90 border-gray-200",
               )}
             >
               <div className="flex items-center justify-center mb-1">
-                <Heart className="h-5 w-5 text-red-500 fill-red-500 mr-1" />
-                <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>75</span>
+                <Heart className="h-3 w-3 sm:h-5 sm:w-5 text-red-500 fill-red-500 mr-1" />
+                <span className={cn("text-sm sm:text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+                  7.5k+
+                </span>
               </div>
-              <p className="text-red-500 text-sm font-medium">Loved This</p>
+              <p className="text-red-500 text-xs font-medium">Loved This</p>
             </div>
           </div>
         </div>
@@ -145,7 +184,9 @@ export default function Home() {
       <section className="py-12 px-4 mt-8">
         <div className="container mx-auto">
           <div className="flex items-center mb-8">
-            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">Plans</h2>
+            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">
+              Plans
+            </h2>
             <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
           </div>
 
@@ -218,43 +259,14 @@ export default function Home() {
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
-          <div className="flex items-center mb-8">
-            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>Visits</h2>
-            <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
-          </div>
-
-          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-4">
-            {Array.from({ length: 9 }, (_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "backdrop-blur-sm rounded-2xl p-4 text-center border transition-colors duration-300",
-                  theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
-                )}
-              >
-                <div className={cn("font-bold text-lg mb-1", theme === "dark" ? "text-white" : "text-gray-900")}>
-                  24
-                </div>
-                <div className="text-red-600 font-bold text-sm tracking-wider">JUL</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12 px-4">
-        <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            <div className="relative h-80 rounded-2xl overflow-hidden">
-              <Image
-                src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg"
-                alt="FAQs background"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <h2 className="text-6xl font-bold text-red-600">FAQs</h2>
-              </div>
+            <div
+              className={cn(
+                "h-80 rounded-2xl flex items-center justify-center",
+                theme === "dark" ? "bg-[#2a2a2a]/50" : "bg-gray-100",
+              )}
+            >
+              <h2 className={cn("text-6xl font-bold", theme === "dark" ? "text-red-500" : "text-red-600")}>FAQs</h2>
             </div>
 
             <div className="space-y-4">
@@ -296,12 +308,7 @@ export default function Home() {
 
       <section className="relative py-16 px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image
-            src="WhatsApp Image 2025-06-07 at 16.34.56_14e1be12.jpg"
-            alt="Contact background"
-            fill
-            className="object-cover"
-          />
+          <Image src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg" alt="Contact background" fill className="object-cover" />
           <div className="absolute inset-0 bg-black/70"></div>
         </div>
 
@@ -312,12 +319,12 @@ export default function Home() {
           <div className="space-y-4 max-w-md mx-auto">
             <div className="flex items-center justify-center text-gray-300">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-              <span>Gurgaon Jhirka Sector-16</span>
+              <span>Dwarka Sec 16C</span>
             </div>
             <div className="flex items-center justify-center text-gray-300">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
               <a href="mailto:Downdating@gmail.com" className="hover:text-white transition-colors">
-                Downdating@gmail.com
+                Downdatingshow@gmail.com
               </a>
             </div>
             <div className="flex items-center justify-center text-gray-300">
