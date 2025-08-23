@@ -1,11 +1,11 @@
 "use client"
 
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import plansData from "@/data/plans.json"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag, Check } from "lucide-react"
+import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag, Check, ChevronLeft } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
@@ -19,7 +19,8 @@ export default function Home() {
   const { theme } = useTheme()
 
   const plans = plansData.plans
-    const galleryImages = [
+
+  const galleryImages = [
     "/romantic-couple-date.png",
     "/placeholder-4gphe.png",
     "/placeholder-6dmf4.png",
@@ -42,6 +43,14 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [galleryImages.length])
 
+  useEffect(() => {
+    const galleryInterval = setInterval(() => {
+      setGalleryIndex((prevIndex) => (prevIndex + 1) % reelsGallery.length)
+    }, 4000)
+
+    return () => clearInterval(galleryInterval)
+  }, [reelsGallery.length])
+
   const nextGalleryImage = () => {
     setGalleryIndex((prevIndex) => (prevIndex + 1) % reelsGallery.length)
   }
@@ -49,7 +58,6 @@ export default function Home() {
   const prevGalleryImage = () => {
     setGalleryIndex((prevIndex) => (prevIndex - 1 + reelsGallery.length) % reelsGallery.length)
   }
-
 
   const faqItems = [
     {
@@ -114,8 +122,8 @@ export default function Home() {
       <section className="relative h-[85vh] overflow-hidden rounded-2xl mx-4 mt-4">
         <div className="absolute inset-0 bg-black/60 z-10 rounded-2xl"></div>
         <Image
-          src="/WhatsApp Image 2025-06-07 at 16.34.57_20ca118e.jpg"
-          alt="Dating background"
+          src={galleryImages[currentImageIndex] || "/placeholder.svg"}
+          alt={`Gallery image ${currentImageIndex + 1}`}
           fill
           className="object-cover rounded-2xl"
           priority
@@ -257,6 +265,70 @@ export default function Home() {
         </div>
       </section>
 
+      {/* <section className="py-12 px-4">
+        <div className="container mx-auto">
+          <div className="flex items-center mb-8">
+            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>Gallery</h2>
+            <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
+          </div>
+
+          <Link href="/reels" className="block">
+            <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden group cursor-pointer">
+              <Image
+                src={reelsGallery[galleryIndex] || "/placeholder.svg"}
+                alt={`Gallery image ${galleryIndex + 1}`}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300"></div>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  prevGalleryImage()
+                }}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors duration-300"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  nextGalleryImage()
+                }}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors duration-300"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-2">View Our Reels</h3>
+                  <p className="text-lg opacity-90">Click to explore more</p>
+                </div>
+              </div>
+
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {reelsGallery.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setGalleryIndex(index)
+                    }}
+                    className={cn(
+                      "w-2 h-2 rounded-full transition-colors duration-300",
+                      index === galleryIndex ? "bg-white" : "bg-white/50",
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section> */}
+
       <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -308,7 +380,7 @@ export default function Home() {
 
       <section className="relative py-16 px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image src="/WhatsApp Image 2025-06-07 at 16.34.58_203925dd.jpg" alt="Contact background" fill className="object-cover" />
+          <Image src="/placeholder-6dmf4.png" alt="Contact background" fill className="object-cover" />
           <div className="absolute inset-0 bg-black/70"></div>
         </div>
 
@@ -319,12 +391,12 @@ export default function Home() {
           <div className="space-y-4 max-w-md mx-auto">
             <div className="flex items-center justify-center text-gray-300">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-              <span>Dwarka Sec 16C</span>
+              <span>Gurgaon Jhirka Sector-16</span>
             </div>
             <div className="flex items-center justify-center text-gray-300">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
               <a href="mailto:Downdating@gmail.com" className="hover:text-white transition-colors">
-                Downdatingshow@gmail.com
+                Downdating@gmail.com
               </a>
             </div>
             <div className="flex items-center justify-center text-gray-300">

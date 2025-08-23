@@ -46,10 +46,7 @@ export default function CartPage() {
   }
 
   // Calculate totals
-  // Calculate totals based on actual item prices
-  const serviceCharges = state.items.reduce((sum, item) => sum + (item.price || 0), 0)
-  const gst = Math.round(serviceCharges * 0.18)
-  const subtotal = serviceCharges + gst
+  const subtotal = state.items.reduce((sum, item) => sum + (item.price || 0), 0)
   const finalTotal = subtotal - discount
 
   return (
@@ -152,10 +149,6 @@ export default function CartPage() {
                       <span className={cn(theme === "dark" ? "text-white" : "text-gray-900")}>₹{item.price}</span>
                     </div>
                   ))}
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">GST (18%)</span>
-                  <span className={cn(theme === "dark" ? "text-white" : "text-gray-900")}>₹{gst}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-green-600">
