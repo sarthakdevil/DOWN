@@ -122,7 +122,7 @@ export default function Home() {
       <section className="relative h-[85vh] overflow-hidden rounded-2xl mx-4 mt-4">
         <div className="absolute inset-0 bg-black/60 z-10 rounded-2xl"></div>
         <Image
-          src={galleryImages[currentImageIndex] || "/placeholder.svg"}
+          src="WhatsApp Image 2025-06-07 at 16.34.57_20ca118e.jpg"
           alt={`Gallery image ${currentImageIndex + 1}`}
           fill
           className="object-cover rounded-2xl"
@@ -380,7 +380,7 @@ export default function Home() {
 
       <section className="relative py-16 px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image src="/placeholder-6dmf4.png" alt="Contact background" fill className="object-cover" />
+          <Image src="/WhatsApp Image 2025-06-07 at 16.34.56_14e1be12.jpg" alt="Contact background" fill className="object-cover" />
           <div className="absolute inset-0 bg-black/70"></div>
         </div>
 
