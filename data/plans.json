@@ -18,7 +18,7 @@
       ],
       "popular": true,
       "color": "red",
-      "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc_GIRLS_FORM_ID/viewform"
+      "googleFormUrl": "https://forms.gle/estjdsw4GJo8ezda8"
     },
     {
       "id": "men-24-hours",
@@ -39,7 +39,7 @@
       ],
       "popular": false,
       "color": "gold",
-      "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc_MEN_24H_FORM_ID/viewform"
+      "googleFormUrl": "https://forms.gle/estjdsw4GJo8ezda8"
     },
     {
       "id": "men-3-days",
@@ -60,7 +60,7 @@
       ],
       "popular": false,
       "color": "blue",
-      "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc_MEN_3D_FORM_ID/viewform"
+      "googleFormUrl": "https://forms.gle/46ZDjZZiyyjtnyjB9"
     },
     {
       "id": "men-regular",
@@ -80,7 +80,7 @@
       ],
       "popular": false,
       "color": "gray",
-      "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc_MEN_REG_FORM_ID/viewform"
+      "googleFormUrl": "https://forms.gle/SMpTcyXgPifAgxbK8"
     },
     {
       "id": "corporate-match-women",
@@ -100,7 +100,7 @@
       ],
       "popular": false,
       "color": "purple",
-      "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc_CORP_WOMEN_FORM_ID/viewform"
+      "googleFormUrl": "https://forms.gle/yUPDwgGHcukxXhW2A"
     },
     {
       "id": "corporate-match-men",
@@ -120,7 +120,7 @@
       ],
       "popular": false,
       "color": "purple",
-      "googleFormUrl": "https://docs.google.com/forms/d/e/1FAIpQLSc_CORP_MEN_FORM_ID/viewform"
+      "googleFormUrl": "https://forms.gle/EHu2VzVEcGcYY4ZY8"
     }
   ]
 }
