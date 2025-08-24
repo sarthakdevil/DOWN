@@ -21,18 +21,18 @@ export default function Home() {
   const plans = plansData.plans
 
   const galleryImages = [
-    "/romantic-couple-date.png",
-    "/placeholder-4gphe.png",
-    "/placeholder-6dmf4.png",
-    "/romantic-couple-date.png",
-    "/placeholder-4gphe.png",
+    "IMG_4927.jpg",
+    "IMG_5027.jpg",
+    "IMG_5290.jpg",
+    "IMG_5330.jpg",
   ]
 
   const reelsGallery = [
-    "/romantic-couple-date.png",
-    "/placeholder-4gphe.png",
-    "/placeholder-6dmf4.png",
-    "/romantic-couple-date.png",
+    "IMG_4927.jpg",
+    "IMG_5027.jpg",
+    "IMG_5290.jpg",
+    "IMG_5330.jpg",
+
   ]
 
   useEffect(() => {
@@ -265,7 +265,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* <section className="py-12 px-4">
+      <section className="py-12 px-4">
         <div className="container mx-auto">
           <div className="flex items-center mb-8">
             <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>Gallery</h2>
@@ -327,7 +327,7 @@ export default function Home() {
             </div>
           </Link>
         </div>
-      </section> */}
+      </section>
 
       <section className="py-12 px-4">
         <div className="container mx-auto">
