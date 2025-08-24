@@ -32,6 +32,8 @@ export default function Home() {
     "IMG_5027.jpg",
     "IMG_5290.jpg",
     "IMG_5330.jpg",
+    "WhatsApp Image 2025-08-24 at 12.55.48_8811ad1f.jpg",
+    
 
   ]
 
