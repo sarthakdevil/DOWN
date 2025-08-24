@@ -33,7 +33,7 @@ export default function Home() {
     "IMG_5290.jpg",
     "IMG_5330.jpg",
     "WhatsApp Image 2025-08-24 at 12.55.48_8811ad1f.jpg",
-    
+
 
   ]
 
@@ -393,12 +393,12 @@ export default function Home() {
           <div className="space-y-4 max-w-md mx-auto">
             <div className="flex items-center justify-center text-gray-300">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
-              <span>Gurgaon Jhirka Sector-16</span>
+              <span>Dwarka Sector-16</span>
             </div>
             <div className="flex items-center justify-center text-gray-300">
               <div className="w-2 h-2 bg-red-600 rounded-full mr-3"></div>
               <a href="mailto:Downdating@gmail.com" className="hover:text-white transition-colors">
-                Downdating@gmail.com
+                Downdatingshow@gmail.com
               </a>
             </div>
             <div className="flex items-center justify-center text-gray-300">
