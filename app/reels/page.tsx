@@ -57,9 +57,9 @@ export default function InstagramReelsPage() {
 
       <div className="relative w-full h-64 mb-6">
         <img
-          src="/IMG_5027.jpg"
+          src="WhatsApp Image 2025-06-07 at 16.29.30_4d368b70.jpg"
           alt="Romantic couple"
-          className="w-full h-full object-cover rotate-180"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-center px-4">
           <h1 className="text-4xl font-bold mb-2">Love Stories</h1>
