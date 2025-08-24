@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import couponsData from "@/data/coupons.json"
+import couponsDataRaw from "@/data/coupons.json"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,6 +10,16 @@ import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 import RazorpayCheckout from "@/components/razorpay-checkout"
+
+// Coupon type based on provided structure
+type Coupon = {
+  id: string;
+  code: string;
+  description: string;
+  discount: number;
+};
+
+const couponsData: Coupon[] = Array.isArray(couponsDataRaw) ? couponsDataRaw : [];
 
 export default function CartPage() {
   const { state, dispatch } = useCart()
@@ -28,6 +38,12 @@ export default function CartPage() {
   }
 
   const applyCoupon = () => {
+    if (!couponsData || couponsData.length === 0) {
+      setDiscount(0)
+      setAppliedCoupon(null)
+      alert("Coupons are currently unavailable.")
+      return
+    }
     const coupon = couponsData.find(
       (c) => c.code.toUpperCase() === couponCode.trim().toUpperCase()
     )
@@ -186,9 +202,13 @@ export default function CartPage() {
                   </Button>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
-                  {couponsData.map((c) => (
-                    <span key={c.code} className="mr-2">{c.code}</span>
-                  ))}
+                  {couponsData && couponsData.length > 0 ? (
+                    couponsData.map((c) => (
+                      <span key={c.code} className="mr-2">{c.code}</span>
+                    ))
+                  ) : (
+                    <span>Coupons unavailable</span>
+                  )}
                 </p>
               </div>
 
