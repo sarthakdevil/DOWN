@@ -6,7 +6,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { CartProvider } from "@/contexts/cart-context"
 import { ThemeProvider } from "@/contexts/theme-context"
-
+import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -28,6 +28,7 @@ export default function RootLayout({
             <div className="flex min-h-screen flex-col">
               <Header />
               <main className="flex-1">{children}</main>
+              <Analytics />
               <Footer />
             </div>
           </CartProvider>
