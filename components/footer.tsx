@@ -93,7 +93,7 @@ export default function Footer() {
               <p>Dwarka Sec 16C</p>
               <p>New Delhi, India</p>
               <p>Email: downdatingshow@gmail.com</p>
-              <p>Phone: +91 98765 43210</p>
+              <p>Phone: +91 92113 18912</p>
             </address>
           </div>
           <div>
