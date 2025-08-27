@@ -21,15 +21,13 @@ export default function Home() {
   const plans = plansData.plans
 
   const galleryImages = [
-    "IMG_4927.jpg",
-    "IMG_5027.jpg",
+    "WhatsApp Image 2025-08-27 at 16.54.05_f5c07bba.jpg",
     "IMG_5290.jpg",
     "IMG_5330.jpg",
   ]
 
   const reelsGallery = [
-    "IMG_4927.jpg",
-    "IMG_5027.jpg",
+    "WhatsApp Image 2025-08-27 at 16.54.05_f5c07bba.jpg",
     "IMG_5290.jpg",
     "IMG_5330.jpg",
     "WhatsApp Image 2025-08-24 at 12.55.48_8811ad1f.jpg",
