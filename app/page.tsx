@@ -103,7 +103,7 @@ export default function Home() {
         id: plan.id,
         title: plan.title,
         price: plan.price,
-        icon: plan.color ? plan.color.charAt(0).toUpperCase() : plan.title.charAt(0),
+        icon: "logo.jpg",
         category: plan.period || "Plan",
         href: plan.googleFormUrl,
       },
@@ -189,81 +189,83 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 px-4 mt-8">
-        <div className="container mx-auto">
-          <div className="flex items-center mb-8">
-            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">
-              Plans
-            </h2>
-            <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
-          </div>
+<section className="py-12 px-4 mt-8">
+  <div className="container mx-auto">
+    <div className="flex items-center mb-8">
+      <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">
+        Plans
+      </h2>
+      <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {plans.map((plan) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {plans.map((plan) => (
+        <div
+          key={plan.id}
+          className={cn(
+            "backdrop-blur-sm rounded-2xl p-6 border transition-colors duration-300",
+            theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+          )}
+        >
+          <div className="flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto overflow-hidden">
+            <img 
+              src="logo.jpg" 
+              alt="Plan logo" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <h3
+            className={cn(
+              "text-xl font-bold mb-3 text-center",
+              theme === "dark" ? "text-white" : "text-gray-900",
+            )}
+          >
+            {plan.title}
+          </h3>
+          <p className="text-gray-400 text-sm mb-6 text-center leading-relaxed">{plan.description}</p>
+          <div className="text-center mb-6">
+            <span className={cn("text-2xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+              ₹{plan.price}
+            </span>
+          </div>
+          <Button
+            onClick={() => addToCart(plan)}
+            className={cn(
+              "w-full rounded-full py-3 font-medium transition-all duration-300",
+              addedToCart === plan.id
+                ? "bg-green-600 hover:bg-green-700 text-white"
+                : "bg-red-600 hover:bg-red-700 text-white",
+            )}
+          >
+            {addedToCart === plan.id ? (
+              <div className="flex items-center justify-center">
+                <Check className="h-4 w-4 mr-2" />
+                Added to Cart!
+              </div>
+            ) : (
+              "Add to Cart"
+            )}
+          </Button>
+          {addedToCart === plan.id && (
+            <div className="mt-3 md:hidden">
               <div
-                key={plan.id}
                 className={cn(
-                  "backdrop-blur-sm rounded-2xl p-6 border transition-colors duration-300",
-                  theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50/50 border-gray-200",
+                  "flex items-center justify-center p-3 rounded-full text-sm font-medium animate-in slide-in-from-bottom-2 duration-300",
+                  theme === "dark"
+                    ? "bg-green-900/50 text-green-300 border border-green-700"
+                    : "bg-green-50 text-green-700 border border-green-200",
                 )}
               >
-                <div
-                  className={`flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto ${plan.color === "gold" ? "bg-yellow-400" : plan.color === "red" ? "bg-red-600" : "bg-gray-400"}`}
-                >
-                  <span className="text-white font-bold text-sm">{plan.title.charAt(0)}</span>
-                </div>
-                <h3
-                  className={cn(
-                    "text-xl font-bold mb-3 text-center",
-                    theme === "dark" ? "text-white" : "text-gray-900",
-                  )}
-                >
-                  {plan.title}
-                </h3>
-                <p className="text-gray-400 text-sm mb-6 text-center leading-relaxed">{plan.description}</p>
-                <div className="text-center mb-6">
-                  <span className={cn("text-2xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
-                    ₹{plan.price}
-                  </span>
-                </div>
-                <Button
-                  onClick={() => addToCart(plan)}
-                  className={cn(
-                    "w-full rounded-full py-3 font-medium transition-all duration-300",
-                    addedToCart === plan.id
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "bg-red-600 hover:bg-red-700 text-white",
-                  )}
-                >
-                  {addedToCart === plan.id ? (
-                    <div className="flex items-center justify-center">
-                      <Check className="h-4 w-4 mr-2" />
-                      Added to Cart!
-                    </div>
-                  ) : (
-                    "Add to Cart"
-                  )}
-                </Button>
-                {addedToCart === plan.id && (
-                  <div className="mt-3 md:hidden">
-                    <div
-                      className={cn(
-                        "flex items-center justify-center p-3 rounded-full text-sm font-medium animate-in slide-in-from-bottom-2 duration-300",
-                        theme === "dark"
-                          ? "bg-green-900/50 text-green-300 border border-green-700"
-                          : "bg-green-50 text-green-700 border border-green-200",
-                      )}
-                    >
-                      <Check className="h-4 w-4 mr-2" />
-                      {plan.title} added to your cart
-                    </div>
-                  </div>
-                )}
+                <Check className="h-4 w-4 mr-2" />
+                {plan.title} added to your cart
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       <section className="py-12 px-4">
         <div className="container mx-auto">

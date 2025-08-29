@@ -61,7 +61,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/plans"
+                  href="#plans"
                   className="transition-colors text-gray-400 hover:text-red-500"
                 >
                   Plans
@@ -73,14 +73,6 @@ export default function Footer() {
                   className="transition-colors text-gray-400 hover:text-red-500"
                 >
                   About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="transition-colors text-gray-400 hover:text-red-500"
-                >
-                  Contact
                 </Link>
               </li>
             </ul>
