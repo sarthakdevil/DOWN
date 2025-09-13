@@ -1,6 +1,27 @@
 {
   "plans": [
     {
+      "id": "For freshers",
+      "title": "Downdating Match (For Freshers)",
+      "price": 0,
+      "originalPrice": 0,
+      "currency": "INR",
+      "period": "one-time",
+      "description": "Special pricing for girls. Get matched with compatible singles and start your dating journey.",
+      "features": [
+        "Unlimited matches",
+        "Enhanced profile customization",
+        "Chat with matches",
+        "Priority support",
+        "Access to dating tips",
+        "Profile verification"
+      ],
+      "popular": true,
+      "limited": true,
+      "color": "red",
+      "googleFormUrl": "https://forms.gle/estjdsw4GJo8ezda8"
+    },
+    {
       "id": "girls-match",
       "title": "Downdating Match (Form for GIRLS Only)",
       "price": 49,

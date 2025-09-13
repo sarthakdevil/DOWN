@@ -13,13 +13,13 @@ import RazorpayCheckout from "@/components/razorpay-checkout"
 
 // Coupon type based on provided structure
 type Coupon = {
-  id: string;
-  code: string;
-  description: string;
-  discount: number;
-};
+  id: string
+  code: string
+  description: string
+  discount: number
+}
 
-const couponsData: Coupon[] = Array.isArray(couponsDataRaw) ? couponsDataRaw : [];
+const couponsData: Coupon[] = Array.isArray(couponsDataRaw) ? couponsDataRaw : []
 
 export default function CartPage() {
   const { state, dispatch } = useCart()
@@ -28,6 +28,7 @@ export default function CartPage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null)
+  const [hasItemsInCheckout, setHasItemsInCheckout] = useState(false) // Track if checkout was opened with items
 
   const removeFromCart = (id: string) => {
     dispatch({ type: "REMOVE_ITEM", payload: id })
@@ -44,9 +45,7 @@ export default function CartPage() {
       alert("Coupons are currently unavailable.")
       return
     }
-    const coupon = couponsData.find(
-      (c) => c.code.toUpperCase() === couponCode.trim().toUpperCase()
-    )
+    const coupon = couponsData.find((c) => c.code.toUpperCase() === couponCode.trim().toUpperCase())
     if (coupon) {
       // Calculate discount as percentage of subtotal
       const subtotal = state.items.reduce((sum, item) => sum + (item.price || 0), 0)
@@ -59,6 +58,16 @@ export default function CartPage() {
       setAppliedCoupon(null)
       alert("Invalid coupon code")
     }
+  }
+
+  const handleCheckoutOpen = () => {
+    setHasItemsInCheckout(true) // Mark that checkout was opened with items
+    setIsCheckoutOpen(true)
+  }
+
+  const handleCheckoutClose = () => {
+    setIsCheckoutOpen(false)
+    setHasItemsInCheckout(false) // Reset when fully closed
   }
 
   // Calculate totals
@@ -204,7 +213,9 @@ export default function CartPage() {
                 <p className="text-xs text-gray-400 mt-1">
                   {couponsData && couponsData.length > 0 ? (
                     couponsData.map((c) => (
-                      <span key={c.code} className="mr-2">{c.code}</span>
+                      <span key={c.code} className="mr-2">
+                        {c.code}
+                      </span>
                     ))
                   ) : (
                     <span>Coupons unavailable</span>
@@ -213,7 +224,7 @@ export default function CartPage() {
               </div>
 
               <Button
-                onClick={() => setIsCheckoutOpen(true)}
+                onClick={handleCheckoutOpen}
                 className="w-full bg-red-600 hover:bg-red-700 text-white py-3"
                 disabled={state.items.length === 0}
               >
@@ -233,8 +244,14 @@ export default function CartPage() {
         )}
       </div>
 
-      {/* Razorpay Checkout Modal */}
-      <RazorpayCheckout isOpen={isCheckoutOpen} onClose={() => setIsCheckoutOpen(false)} amount={finalTotal} />
+      {/* Razorpay Checkout Modal - Keep mounted if checkout was opened with items */}
+      {(state.items.length > 0 || hasItemsInCheckout) && (
+        <RazorpayCheckout 
+          isOpen={isCheckoutOpen} 
+          onClose={handleCheckoutClose} 
+          amount={finalTotal} 
+        />
+      )}
     </div>
   )
 }

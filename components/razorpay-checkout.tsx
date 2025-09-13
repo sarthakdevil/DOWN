@@ -56,13 +56,16 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
   }
 
   const getGoogleFormUrls = (cartItems: any[]) => {
-    return cartItems.map((item) => {
+    const plansWithForms = cartItems.map((item) => {
       const planData = plansData.plans.find((plan) => plan.id === item.id)
+      console.log(`[DEBUG] Plan ${item.id} data:`, planData)
       return {
         ...item,
         googleFormUrl: planData?.googleFormUrl || "#",
       }
     })
+    console.log("[DEBUG] Plans with forms:", plansWithForms)
+    return plansWithForms
   }
 
   const handlePayment = async () => {
@@ -72,9 +75,59 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
     }
 
     setIsLoading(true)
+    console.log("[DEBUG] Starting payment process. Amount:", amount)
+    console.log("[DEBUG] Cart items:", state.items)
 
     try {
-      // Load Razorpay script
+      if (amount === 0) {
+        console.log("[DEBUG] Processing free plan checkout")
+
+        // For free plans, skip payment and go directly to forms
+        const applicationResponse = await fetch("/api/submit-application", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: customerInfo.name,
+            email: customerInfo.email,
+            phone: customerInfo.phone,
+            razorpay_order_id: "free",
+            razorpay_payment_id: "free",
+            plan_ids: JSON.stringify(state.items.map((item) => item.id)),
+            plan_titles: JSON.stringify(state.items.map((item) => item.title)),
+            total_amount: amount,
+            payment_status: "completed",
+          }),
+        })
+
+        const applicationResult = await applicationResponse.json()
+        console.log("[DEBUG] Application save result:", applicationResult)
+        
+        if (!applicationResult.success) {
+          console.error("[ERROR] Failed to save application:", applicationResult.error)
+          alert("Failed to process your request. Please try again.")
+          setIsLoading(false)
+          return
+        }
+
+        // Show Google Forms and clear cart for free plans
+        const plansWithForms = getGoogleFormUrls(state.items)
+        console.log("[DEBUG] Setting purchased plans:", plansWithForms)
+        setPurchasedPlans(plansWithForms)
+        
+        console.log("[DEBUG] Clearing cart")
+        dispatch({ type: "CLEAR_CART" })
+        
+        console.log("[DEBUG] Setting showGoogleForms to true")
+        setShowGoogleForms(true)
+        
+        console.log("[DEBUG] Current state - showGoogleForms should be true")
+        setIsLoading(false)
+        return
+      }
+
+      // Load Razorpay script for paid plans
       const scriptLoaded = await loadRazorpayScript()
       if (!scriptLoaded) {
         throw new Error("Failed to load Razorpay script")
@@ -159,27 +212,44 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
     } catch (error) {
       console.error("Payment error:", error)
       alert("Payment failed. Please try again.")
-    } finally {
       setIsLoading(false)
     }
   }
 
   const handleGoogleFormsClose = () => {
+    console.log("[DEBUG] Closing Google Forms dialog")
     setShowGoogleForms(false)
     setPurchasedPlans([])
     onClose()
   }
 
   const openGoogleForm = (formUrl: string, planTitle: string) => {
-    // Add customer info as URL parameters
-    const url = new URL(formUrl)
-    url.searchParams.set("entry.name", customerInfo.name)
-    url.searchParams.set("entry.email", customerInfo.email)
-    url.searchParams.set("entry.phone", customerInfo.phone)
-    url.searchParams.set("entry.plan", planTitle)
+    console.log("[DEBUG] Opening Google Form:", formUrl, "for plan:", planTitle)
+    
+    // Check if the URL is valid
+    if (!formUrl || formUrl === "#") {
+      alert(`No form URL configured for ${planTitle}. Please contact support.`)
+      return
+    }
 
-    window.open(url.toString(), "_blank")
+    try {
+      // Add customer info as URL parameters
+      const url = new URL(formUrl)
+      url.searchParams.set("entry.name", customerInfo.name)
+      url.searchParams.set("entry.email", customerInfo.email)
+      url.searchParams.set("entry.phone", customerInfo.phone)
+      url.searchParams.set("entry.plan", planTitle)
+
+      console.log("[DEBUG] Opening URL:", url.toString())
+      window.open(url.toString(), "_blank")
+    } catch (error) {
+      console.error("[ERROR] Invalid URL:", formUrl, error)
+      alert(`Invalid form URL for ${planTitle}. Please contact support.`)
+    }
   }
+
+  // Debug logging for state changes
+  console.log("[DEBUG] Render - isOpen:", isOpen, "showGoogleForms:", showGoogleForms, "purchasedPlans count:", purchasedPlans.length)
 
   return (
     <>
@@ -332,6 +402,10 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     Processing...
                   </>
+                ) : amount === 0 ? (
+                  "Continue for Free"
+                ) : amount === 0 ? (
+                  "Continue for Free"
                 ) : (
                   `Pay ₹${amount}`
                 )}
@@ -374,7 +448,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
                   theme === "dark" ? "text-white" : "text-gray-900",
                 )}
               >
-                🎉 Payment Successful!
+                🎉 {amount === 0 ? 'Registration Successful!' : 'Payment Successful!'}
               </h3>
               <p
                 className={cn(
@@ -382,8 +456,10 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
                   theme === "dark" ? "text-gray-300" : "text-gray-600",
                 )}
               >
-                Thank you for your purchase! Please complete your dating profile for each plan you've purchased by
-                clicking the forms below.
+                {amount === 0 
+                  ? 'Thank you for registering! Please complete your dating profile for each free plan by clicking the forms below.'
+                  : 'Thank you for your purchase! Please complete your dating profile for each plan you\'ve purchased by clicking the forms below.'
+                }
               </p>
             </div>
 
@@ -393,35 +469,57 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
               >
                 Your Plans & Forms:
               </h4>
-              {purchasedPlans.map((plan) => (
-                <div
-                  key={plan.id}
-                  className={cn(
-                    "flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg border",
-                    theme === "dark" ? "bg-[#2a2a2a]/30 border-[#333333]" : "bg-gray-50 border-gray-200",
-                  )}
-                >
-                  <div className="flex-1 min-w-0">
-                    <h5
+              {purchasedPlans.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-400">No plans found. Please try again or contact support.</p>
+                </div>
+              ) : (
+                purchasedPlans.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className={cn(
+                      "flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-lg border",
+                      theme === "dark" ? "bg-[#2a2a2a]/30 border-[#333333]" : "bg-gray-50 border-gray-200",
+                    )}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h5
+                          className={cn(
+                            "font-medium text-base leading-tight",
+                            theme === "dark" ? "text-white" : "text-gray-900",
+                          )}
+                        >
+                          {plan.title}
+                        </h5>
+                        <p className="text-sm text-gray-400 mt-1">₹{plan.price}</p>
+                      </div>
+                      <Button
+                        onClick={() => openGoogleForm(plan.googleFormUrl, plan.title)}
+                        className="bg-red-600 hover:bg-red-700 text-white h-10 w-full sm:w-auto"
+                        size="sm"
+                        disabled={!plan.googleFormUrl || plan.googleFormUrl === "#"}
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        {!plan.googleFormUrl || plan.googleFormUrl === "#" ? "No Form Available" : "Fill Form"}
+                      </Button>
+                    </div>
+                    <div
                       className={cn(
-                        "font-medium text-base leading-tight",
-                        theme === "dark" ? "text-white" : "text-gray-900",
+                        "text-xs p-2 rounded border font-mono break-all",
+                        theme === "dark"
+                          ? "bg-[#1a1a1a] border-[#444444] text-gray-300"
+                          : "bg-gray-100 border-gray-300 text-gray-600",
                       )}
                     >
-                      {plan.title}
-                    </h5>
-                    <p className="text-sm text-gray-400 mt-1">₹{plan.price}</p>
+                      <span className="text-gray-500">Form URL: </span>
+                      <span className={plan.googleFormUrl === "#" ? "text-red-500" : "text-blue-500"}>
+                        {plan.googleFormUrl === "#" ? "Not configured" : plan.googleFormUrl}
+                      </span>
+                    </div>
                   </div>
-                  <Button
-                    onClick={() => openGoogleForm(plan.googleFormUrl, plan.title)}
-                    className="bg-red-600 hover:bg-red-700 text-white h-10 w-full sm:w-auto"
-                    size="sm"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Fill Form
-                  </Button>
-                </div>
-              ))}
+                ))
+              )}
             </div>
 
             <div
@@ -437,7 +535,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
             </div>
 
             <div className="flex justify-center pt-2">
-              <Button onClick={handleGoogleFormsClose} variant="outline" className="bg-transparent h-10 px-8">
+              <Button onClick={handleGoogleFormsClose} variant="outline" className="bg-transparent h-11 px-8">
                 Close
               </Button>
             </div>
