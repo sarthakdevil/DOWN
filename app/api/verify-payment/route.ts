@@ -1,8 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 import crypto from "crypto"
-import { neon } from "@neondatabase/serverless"
+import { createClient } from "@supabase/supabase-js"
 
-const sql = neon(process.env.DATABASE_URL!)
+const supabase = createClient(
+  process.env.DATABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // use service role for server routes
+)
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,38 +20,40 @@ export async function POST(request: NextRequest) {
 
 
     // Store payment details in database
-    const paymentRecord = await sql`
-      INSERT INTO payments (
-        razorpay_order_id,
-        razorpay_payment_id,
-        amount,
-        currency,
-        status,
-        cart_items,
-        customer_info,
-        created_at
-      ) VALUES (
-        ${razorpay_order_id},
-        ${razorpay_payment_id},
-        ${cartItems.reduce((sum: number, item: any) => sum + item.price, 0)},
-        'INR',
-        'completed',
-        ${JSON.stringify(cartItems)},
-        ${JSON.stringify(customerInfo)},
-        NOW()
-      ) RETURNING id
-    `
+    const { data: paymentRecord, error } = await supabase
+      .from("payments")
+      .insert([
+        {
+          razorpay_order_id,
+          razorpay_payment_id,
+          total_amount: cartItems.reduce((sum: number, item: any) => sum + item.price, 0),
+          currency: 'INR',
+          payment_status: 'completed',
+          plan_ids: JSON.stringify(cartItems.map((item: any) => item.id)),
+          plan_titles: JSON.stringify(cartItems.map((item: any) => item.title)),
+          name: customerInfo.name,
+          email: customerInfo.email,
+          phone: customerInfo.phone,
+        },
+      ])
+      .select("id")
+      .single()
+
+    if (error) {
+      console.error("Database error:", error)
+      return NextResponse.json({ success: false, error: "Failed to store payment" }, { status: 500 })
+    }
 
     console.log("Payment verified and stored:", {
       paymentId: razorpay_payment_id,
       orderId: razorpay_order_id,
-      recordId: paymentRecord[0].id,
+      recordId: paymentRecord.id,
     })
 
     return NextResponse.json({
       success: true,
       message: "Payment verified successfully",
-      paymentId: paymentRecord[0].id,
+      paymentId: paymentRecord.id,
     })
   } catch (error) {
     console.error("Payment verification failed:", error)
