@@ -21,7 +21,7 @@ interface Plan {
   features: string[]
   popular: boolean
   color: string
-  googleFormUrl: string
+  google_form_url: string
 }
 
 export default function Home() {
@@ -187,7 +187,7 @@ useEffect(() => {
         price: plan.price,
         icon: "logo.jpg",
         category: plan.period || "Plan",
-        href: plan.googleFormUrl,
+        href: plan.google_form_url,
       },
     })
     setAddedToCart(plan.id)

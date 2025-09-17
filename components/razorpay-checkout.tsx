@@ -22,7 +22,7 @@ interface Plan {
   features: string[]
   popular: boolean
   color: string
-  googleFormUrl: string
+  google_form_url: string
 }
 
 interface RazorpayCheckoutProps {
@@ -104,7 +104,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
       console.log(`[DEBUG] Plan ${item.id} data:`, planData)
       return {
         ...item,
-        googleFormUrl: planData?.googleFormUrl || "#",
+        googleFormUrl: planData?.google_form_url || "#",
       }
     })
     console.log("[DEBUG] Plans with forms:", plansWithForms)

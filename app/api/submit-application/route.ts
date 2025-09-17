@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.DATABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY! // use service role for server routes
 );
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // Insert into plan_applications table
     const { data: result, error } = await supabase
-      .from("plan_applications")
+      .from("payments")
       .insert([
         {
           name,
