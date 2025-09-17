@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -9,7 +10,20 @@ import { Loader2, CreditCard, ExternalLink } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
-import plansData from "@/data/plans.json"
+
+interface Plan {
+  id: string
+  title: string
+  price: number
+  originalPrice?: number
+  currency: string
+  period: string
+  description: string
+  features: string[]
+  popular: boolean
+  color: string
+  googleFormUrl: string
+}
 
 interface RazorpayCheckoutProps {
   isOpen: boolean
@@ -33,6 +47,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
   const [isLoading, setIsLoading] = useState(false)
   const [showGoogleForms, setShowGoogleForms] = useState(false)
   const [purchasedPlans, setPurchasedPlans] = useState<any[]>([])
+  const [plans, setPlans] = useState<Plan[]>([])
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
     email: "",
@@ -40,6 +55,34 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
   })
   const { state, dispatch } = useCart()
   const { theme } = useTheme()
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const cachedPlans = localStorage.getItem('cachedPlans')
+      if (cachedPlans) {
+        const parsedPlans = JSON.parse(cachedPlans)
+        if (parsedPlans.length > 0 && plans.length === 0) {
+          console.log('[CHECKOUT] Loading plans from cache:', parsedPlans)
+          setPlans(parsedPlans)
+        }
+        return
+      }
+
+      try {
+        console.log('[CHECKOUT] Fetching plans from API')
+        const response = await axios.get('/api/getplans')
+        const data = response.data
+        if (data.plans && data.plans.length > 0 && plans.length === 0) {
+          console.log('[CHECKOUT] Setting plans from API:', data.plans)
+          setPlans(data.plans)
+          localStorage.setItem('cachedPlans', JSON.stringify(data.plans))
+        }
+      } catch (error) {
+        console.error('[CHECKOUT] Error fetching plans:', error)
+      }
+    }
+    fetchPlans()
+  }, [plans.length])
 
   const handleInputChange = (field: keyof CustomerInfo, value: string) => {
     setCustomerInfo((prev) => ({ ...prev, [field]: value }))
@@ -57,7 +100,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
 
   const getGoogleFormUrls = (cartItems: any[]) => {
     const plansWithForms = cartItems.map((item) => {
-      const planData = plansData.plans.find((plan) => plan.id === item.id)
+      const planData = plans.find((plan: Plan) => plan.id === item.id)
       console.log(`[DEBUG] Plan ${item.id} data:`, planData)
       return {
         ...item,
@@ -139,7 +182,10 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount }),
+        body: JSON.stringify({ 
+          amount,
+          planIds: state.items.map((item) => item.id)
+        }),
       })
 
       const orderData = await orderResponse.json()

@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Play, Pause, Heart } from "lucide-react"
-
+import Image from "next/image"
 export default function InstagramReelsPage() {
   const [playingVideo, setPlayingVideo] = useState<number | null>(0) // Start with first video playing
   const [likedVideos, setLikedVideos] = useState<Set<number>>(new Set())
@@ -52,11 +52,17 @@ export default function InstagramReelsPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="absolute top-4 left-4 z-10">
-        <img src="/logo.jpg" alt="Logo" className="w-12 h-12 rounded-lg" />
+        <Image
+          src="/logo.jpg"
+          alt="Logo"
+          width={48}
+          height={48}
+          className="w-12 h-12 rounded-lg"
+        />
       </div>
 
       <div className="relative w-full h-64 mb-6">
-        <img
+        <Image
           src="WhatsApp Image 2025-06-07 at 16.29.30_4d368b70.jpg"
           alt="Romantic couple"
           className="w-full h-full object-cover"

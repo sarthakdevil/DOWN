@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import plansData from "@/data/plans.json"
+import axios from "axios"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -9,17 +9,30 @@ import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag, Check, ChevronLeft
 import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
+import { useRef } from 'react'
+interface Plan {
+  id: string
+  title: string
+  price: number
+  originalPrice?: number
+  currency: string
+  period: string
+  description: string
+  features: string[]
+  popular: boolean
+  color: string
+  googleFormUrl: string
+}
 
 export default function Home() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
   const [addedToCart, setAddedToCart] = useState<string | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [galleryIndex, setGalleryIndex] = useState(0)
+  const [plans, setPlans] = useState<Plan[]>([])
   const { dispatch, state } = useCart()
   const { theme } = useTheme()
-
-  const plans = plansData.plans
-
+  const plansLoaded = useRef(false)
   const galleryImages = ["WhatsApp Image 2025-08-27 at 16.54.05_f5c07bba.jpg", "IMG_5290.jpg", "IMG_5330.jpg"]
 
   const reelsGallery = [
@@ -28,6 +41,81 @@ export default function Home() {
     "IMG_5330.jpg",
     "WhatsApp Image 2025-08-24 at 12.55.48_8811ad1f.jpg",
   ]
+
+  // Replace your current useEffect for fetching plans with this:
+
+useEffect(() => {
+  const fetchPlans = async () => {
+    // Check cache first
+    const cachedPlans = localStorage.getItem('cachedPlans')
+    if (cachedPlans) {
+      const parsedPlans = JSON.parse(cachedPlans)
+      if (parsedPlans.length > 0) {
+        console.log('Loading plans from cache:', parsedPlans)
+        setPlans(parsedPlans)
+        return // Exit early if we have cached data
+      }
+    }
+
+    // Only fetch from API if no cached data
+    try {
+      console.log('Fetching plans from API')
+      const response = await axios.get('/api/getplans')
+      const data = response.data
+      if (data.plans && data.plans.length > 0) {
+        console.log('Setting plans from API:', data.plans)
+        setPlans(data.plans)
+        localStorage.setItem('cachedPlans', JSON.stringify(data.plans))
+      }
+    } catch (error) {
+      console.error('Error fetching plans:', error)
+    }
+  }
+
+  // Only run if plans haven't been loaded yet
+  if (plans.length === 0) {
+    fetchPlans()
+  }
+}, []) // Remove plans.length from dependency array
+
+// Alternative approach - using a ref to track if plans have been loaded:
+
+
+// Add this with your other state
+
+// Then use this version:
+useEffect(() => {
+  const fetchPlans = async () => {
+    if (plansLoaded.current) return // Prevent multiple loads
+    
+    const cachedPlans = localStorage.getItem('cachedPlans')
+    if (cachedPlans) {
+      const parsedPlans = JSON.parse(cachedPlans)
+      if (parsedPlans.length > 0) {
+        console.log('Loading plans from cache:', parsedPlans)
+        setPlans(parsedPlans)
+        plansLoaded.current = true
+        return
+      }
+    }
+
+    try {
+      console.log('Fetching plans from API')
+      const response = await axios.get('/api/getplans')
+      const data = response.data
+      if (data.plans && data.plans.length > 0) {
+        console.log('Setting plans from API:', data.plans)
+        setPlans(data.plans)
+        localStorage.setItem('cachedPlans', JSON.stringify(data.plans))
+        plansLoaded.current = true
+      }
+    } catch (error) {
+      console.error('Error fetching plans:', error)
+    }
+  }
+
+  fetchPlans()
+}, []) // Empty dependency array
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -90,7 +178,7 @@ export default function Home() {
     setExpandedFAQ(expandedFAQ === index ? null : index)
   }
 
-  const addToCart = (plan: (typeof plans)[0]) => {
+  const addToCart = (plan: Plan) => {
     dispatch({
       type: "ADD_ITEM",
       payload: {
@@ -103,7 +191,14 @@ export default function Home() {
       },
     })
     setAddedToCart(plan.id)
+    addPlanToCache(plan)
     setTimeout(() => setAddedToCart(null), 2000)
+  }
+
+  const addPlanToCache = (newPlan: Plan) => {
+    const updatedPlans = [...plans, newPlan]
+    setPlans(updatedPlans)
+    localStorage.setItem('cachedPlans', JSON.stringify(updatedPlans))
   }
 
   return (
@@ -208,21 +303,15 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-                {plan.limited && (
-                  <div
-                    className={cn(
-                      "absolute -top-3 z-10",
-                      plan.popular ? "right-4" : "left-1/2 transform -translate-x-1/2",
-                    )}
-                  >
-                    <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                      Limited
-                    </div>
-                  </div>
-                )}
 
                 <div className="flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto overflow-hidden">
-                  <img src="logo.jpg" alt="Plan logo" className="w-full h-full object-cover" />
+                  <Image
+    src="logo.jpg"
+    alt="Plan logo"
+    width={64}
+    height={64}
+    className="w-full h-full object-cover"
+  />
                 </div>
                 <h3
                   className={cn(
