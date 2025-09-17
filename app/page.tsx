@@ -23,7 +23,6 @@ interface Plan {
   color: string
   google_form_url: string
 }
-
 export default function Home() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
   const [addedToCart, setAddedToCart] = useState<string | null>(null)
