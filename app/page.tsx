@@ -41,80 +41,71 @@ export default function Home() {
     "WhatsApp Image 2025-08-24 at 12.55.48_8811ad1f.jpg",
   ]
 
-  // Replace your current useEffect for fetching plans with this:
+  // Separate localStorage keys for different data
+  const PLANS_STORAGE_KEY = 'downdating-plans-data'
+  const PLANS_CACHE_KEY = 'downdating-plans-cache'
 
-useEffect(() => {
-  const fetchPlans = async () => {
-    // Check cache first
-    const cachedPlans = localStorage.getItem('cachedPlans')
-    if (cachedPlans) {
-      const parsedPlans = JSON.parse(cachedPlans)
-      if (parsedPlans.length > 0) {
-        console.log('Loading plans from cache:', parsedPlans)
-        setPlans(parsedPlans)
-        return // Exit early if we have cached data
-      }
-    }
+  // Utility functions for localStorage management
+  const savePlansToStorage = (plansData: Plan[]) => {
+    const data = JSON.stringify(plansData)
+    localStorage.setItem(PLANS_STORAGE_KEY, data)
+    localStorage.setItem(PLANS_CACHE_KEY, data)
+  }
 
-    // Only fetch from API if no cached data
+  const loadPlansFromStorage = (key: string): Plan[] | null => {
     try {
-      console.log('Fetching plans from API')
-      const response = await axios.get('/api/getplans')
-      const data = response.data
-      if (data.plans && data.plans.length > 0) {
-        console.log('Setting plans from API:', data.plans)
-        setPlans(data.plans)
-        localStorage.setItem('cachedPlans', JSON.stringify(data.plans))
-      }
+      const data = localStorage.getItem(key)
+      return data ? JSON.parse(data) : null
     } catch (error) {
-      console.error('Error fetching plans:', error)
+      console.error(`Error loading plans from ${key}:`, error)
+      localStorage.removeItem(key) // Remove corrupted data
+      return null
     }
   }
 
-  // Only run if plans haven't been loaded yet
-  if (plans.length === 0) {
-    fetchPlans()
-  }
-}, []) // Remove plans.length from dependency array
+  useEffect(() => {
+    const fetchPlans = async () => {
+      if (plansLoaded.current) return // Prevent multiple loads
 
-// Alternative approach - using a ref to track if plans have been loaded:
-
-
-// Add this with your other state
-
-// Then use this version:
-useEffect(() => {
-  const fetchPlans = async () => {
-    if (plansLoaded.current) return // Prevent multiple loads
-    
-    const cachedPlans = localStorage.getItem('cachedPlans')
-    if (cachedPlans) {
-      const parsedPlans = JSON.parse(cachedPlans)
-      if (parsedPlans.length > 0) {
-        console.log('Loading plans from cache:', parsedPlans)
-        setPlans(parsedPlans)
+      // First, try to load from persistent storage
+      const savedPlans = loadPlansFromStorage(PLANS_STORAGE_KEY)
+      if (savedPlans && savedPlans.length > 0) {
+        console.log('Loading plans from persistent storage:', savedPlans)
+        setPlans(savedPlans)
         plansLoaded.current = true
         return
       }
-    }
 
-    try {
-      console.log('Fetching plans from API')
-      const response = await axios.get('/api/getplans')
-      const data = response.data
-      if (data.plans && data.plans.length > 0) {
-        console.log('Setting plans from API:', data.plans)
-        setPlans(data.plans)
-        localStorage.setItem('cachedPlans', JSON.stringify(data.plans))
+      // Then try cache
+      const cachedPlans = loadPlansFromStorage(PLANS_CACHE_KEY)
+      if (cachedPlans && cachedPlans.length > 0) {
+        console.log('Loading plans from cache:', cachedPlans)
+        setPlans(cachedPlans)
+        // Save to persistent storage for future use
+        savePlansToStorage(cachedPlans)
         plansLoaded.current = true
+        return
       }
-    } catch (error) {
-      console.error('Error fetching plans:', error)
-    }
-  }
 
-  fetchPlans()
-}, []) // Empty dependency array
+      // Finally, fetch from API
+      try {
+        console.log('Fetching plans from API')
+        const response = await axios.get('/api/getplans')
+        const data = response.data
+        if (data.plans && data.plans.length > 0) {
+          console.log('Setting plans from API:', data.plans)
+          setPlans(data.plans)
+          // Save to both persistent storage and cache
+          savePlansToStorage(data.plans)
+          plansLoaded.current = true
+        }
+      } catch (error) {
+        console.error('Error fetching plans:', error)
+      }
+    }
+
+    fetchPlans()
+  }, []) // Empty dependency array
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -189,16 +180,16 @@ useEffect(() => {
         href: plan.google_form_url,
       },
     })
+
+    // Save plans to persistent storage when user interacts with them
+    if (plans.length > 0) {
+      savePlansToStorage(plans)
+    }
+
     setAddedToCart(plan.id)
-    addPlanToCache(plan)
     setTimeout(() => setAddedToCart(null), 2000)
   }
 
-  const addPlanToCache = (newPlan: Plan) => {
-    const updatedPlans = [...plans, newPlan]
-    setPlans(updatedPlans)
-    localStorage.setItem('cachedPlans', JSON.stringify(updatedPlans))
-  }
 
   return (
     <div

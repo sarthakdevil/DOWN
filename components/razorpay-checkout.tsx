@@ -58,16 +58,37 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
 
   useEffect(() => {
     const fetchPlans = async () => {
-      const cachedPlans = localStorage.getItem('cachedPlans')
-      if (cachedPlans) {
-        const parsedPlans = JSON.parse(cachedPlans)
-        if (parsedPlans.length > 0 && plans.length === 0) {
-          console.log('[CHECKOUT] Loading plans from cache:', parsedPlans)
-          setPlans(parsedPlans)
+      // Try persistent storage first
+      const savedPlans = localStorage.getItem('downdating-plans-data')
+      if (savedPlans) {
+        try {
+          const parsedPlans = JSON.parse(savedPlans)
+          if (parsedPlans.length > 0 && plans.length === 0) {
+            console.log('[CHECKOUT] Loading plans from persistent storage:', parsedPlans)
+            setPlans(parsedPlans)
+            return
+          }
+        } catch (error) {
+          console.error('[CHECKOUT] Error parsing saved plans:', error)
         }
-        return
       }
 
+      // Try cache next
+      const cachedPlans = localStorage.getItem('downdating-plans-cache')
+      if (cachedPlans) {
+        try {
+          const parsedPlans = JSON.parse(cachedPlans)
+          if (parsedPlans.length > 0 && plans.length === 0) {
+            console.log('[CHECKOUT] Loading plans from cache:', parsedPlans)
+            setPlans(parsedPlans)
+            return
+          }
+        } catch (error) {
+          console.error('[CHECKOUT] Error parsing cached plans:', error)
+        }
+      }
+
+      // Finally fetch from API
       try {
         console.log('[CHECKOUT] Fetching plans from API')
         const response = await axios.get('/api/getplans')
@@ -75,7 +96,10 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
         if (data.plans && data.plans.length > 0 && plans.length === 0) {
           console.log('[CHECKOUT] Setting plans from API:', data.plans)
           setPlans(data.plans)
-          localStorage.setItem('cachedPlans', JSON.stringify(data.plans))
+          // Save to both persistent and cache storage
+          const plansData = JSON.stringify(data.plans)
+          localStorage.setItem('downdating-plans-data', plansData)
+          localStorage.setItem('downdating-plans-cache', plansData)
         }
       } catch (error) {
         console.error('[CHECKOUT] Error fetching plans:', error)
