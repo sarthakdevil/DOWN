@@ -296,7 +296,27 @@ export default function Home() {
                 >
                   {plan.title}
                 </h3>
-                <p className="text-gray-400 text-sm mb-6 text-center leading-relaxed">{plan.description}</p>
+                <p className="text-gray-400 text-sm mb-4 text-center leading-relaxed">{plan.description}</p>
+
+                {/* Features List */}
+                {plan.features && plan.features.length > 0 && (
+                  <div className="mb-6">
+                    <ul className="space-y-2">
+                      {plan.features.map((feature, index) => (
+                        <li key={index} className="flex items-center text-sm">
+                          <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                          <span className={cn(
+                            "leading-relaxed",
+                            theme === "dark" ? "text-gray-300" : "text-gray-600"
+                          )}>
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 <div className="text-center mb-6">
                   {plan.original_price && plan.original_price > plan.price ? (
                     <>
