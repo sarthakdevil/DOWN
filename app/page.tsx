@@ -9,12 +9,12 @@ import { Star, Heart, ChevronRight, ChevronDown, ShoppingBag, Check, ChevronLeft
 import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
-import { useRef } from 'react'
+import { useRef } from "react"
 interface Plan {
   id: string
   title: string
   price: number
-  originalPrice?: number
+  original_price?: number
   currency: string
   period: string
   description: string
@@ -42,8 +42,8 @@ export default function Home() {
   ]
 
   // Separate localStorage keys for different data
-  const PLANS_STORAGE_KEY = 'downdating-plans-data'
-  const PLANS_CACHE_KEY = 'downdating-plans-cache'
+  const PLANS_STORAGE_KEY = "downdating-plans-data"
+  const PLANS_CACHE_KEY = "downdating-plans-cache"
 
   // Utility functions for localStorage management
   const savePlansToStorage = (plansData: Plan[]) => {
@@ -63,44 +63,36 @@ export default function Home() {
     }
   }
 
+  const forceClearCache = () => {
+    console.log('Force clearing plans cache...')
+    localStorage.removeItem(PLANS_STORAGE_KEY)
+    localStorage.removeItem(PLANS_CACHE_KEY)
+    // Also clear any other related cache keys
+    localStorage.removeItem('cachedPlans')
+    // Note: Keeping cart data intact - localStorage.removeItem('downdating-cart')
+  }
+
   useEffect(() => {
     const fetchPlans = async () => {
       if (plansLoaded.current) return // Prevent multiple loads
 
-      // First, try to load from persistent storage
-      const savedPlans = loadPlansFromStorage(PLANS_STORAGE_KEY)
-      if (savedPlans && savedPlans.length > 0) {
-        console.log('Loading plans from persistent storage:', savedPlans)
-        setPlans(savedPlans)
-        plansLoaded.current = true
-        return
-      }
+      // Force clear cache on every load
+      forceClearCache()
 
-      // Then try cache
-      const cachedPlans = loadPlansFromStorage(PLANS_CACHE_KEY)
-      if (cachedPlans && cachedPlans.length > 0) {
-        console.log('Loading plans from cache:', cachedPlans)
-        setPlans(cachedPlans)
-        // Save to persistent storage for future use
-        savePlansToStorage(cachedPlans)
-        plansLoaded.current = true
-        return
-      }
-
-      // Finally, fetch from API
+      // Always fetch fresh data from API (skip localStorage)
       try {
-        console.log('Fetching plans from API')
-        const response = await axios.get('/api/getplans')
+        console.log("Fetching fresh plans from API (cache cleared)")
+        const response = await axios.get("/api/getplans")
         const data = response.data
         if (data.plans && data.plans.length > 0) {
-          console.log('Setting plans from API:', data.plans)
+          console.log("Setting fresh plans from API:", data.plans)
           setPlans(data.plans)
-          // Save to both persistent storage and cache
-          savePlansToStorage(data.plans)
+          // Optionally save to storage if you want to keep it for other purposes
+          // savePlansToStorage(data.plans)
           plansLoaded.current = true
         }
       } catch (error) {
-        console.error('Error fetching plans:', error)
+        console.error("Error fetching plans:", error)
       }
     }
 
@@ -189,7 +181,6 @@ export default function Home() {
     setAddedToCart(plan.id)
     setTimeout(() => setAddedToCart(null), 2000)
   }
-
 
   return (
     <div
@@ -295,13 +286,7 @@ export default function Home() {
                 )}
 
                 <div className="flex items-center justify-center w-16 h-16 rounded-full mb-4 mx-auto overflow-hidden">
-                  <Image
-    src="logo.jpg"
-    alt="Plan logo"
-    width={64}
-    height={64}
-    className="w-full h-full object-cover"
-  />
+                  <Image src="logo.jpg" alt="Plan logo" width={64} height={64} className="w-full h-full object-cover" />
                 </div>
                 <h3
                   className={cn(
@@ -313,9 +298,20 @@ export default function Home() {
                 </h3>
                 <p className="text-gray-400 text-sm mb-6 text-center leading-relaxed">{plan.description}</p>
                 <div className="text-center mb-6">
-                  <span className={cn("text-2xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
-                    ₹{plan.price}
-                  </span>
+                  {plan.original_price && plan.original_price > plan.price ? (
+                    <>
+                      <span className="block text-base font-medium text-gray-400 line-through mb-1">
+                        ₹{plan.original_price}
+                      </span>
+                      <span className={cn("text-2xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+                        ₹{plan.price}
+                      </span>
+                    </>
+                  ) : (
+                    <span className={cn("text-2xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
+                      ₹{plan.price}
+                    </span>
+                  )}
                 </div>
                 <Button
                   onClick={() => addToCart(plan)}
