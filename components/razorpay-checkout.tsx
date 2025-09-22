@@ -219,7 +219,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
 
       // Configure Razorpay options
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: process.env.RAZORPAY_KEY_ID,
         amount: orderData.order.amount,
         currency: orderData.order.currency,
         name: "DownDating",
@@ -565,7 +565,7 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
                         <p className="text-sm text-gray-400 mt-1">₹{plan.price}</p>
                       </div>
                       <Button
-                        onClick={() => openGoogleForm(plan.googleFormUrl, plan.title)}
+                        onClick={() => openGoogleForm(plan.google_form_url, plan.title)}
                         className="bg-red-600 hover:bg-red-700 text-white h-10 w-full sm:w-auto"
                         size="sm"
                         disabled={!plan.googleFormUrl || plan.googleFormUrl === "#"}
