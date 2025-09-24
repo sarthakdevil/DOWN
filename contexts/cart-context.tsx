@@ -10,6 +10,7 @@ interface CartItem {
   icon: string
   category: string
   href: string
+  quantity?: number
 }
 
 interface CartState {
@@ -51,10 +52,21 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case "ADD_ITEM": {
       const existingItem = currentItems.find((item) => item.id === action.payload.id)
       if (existingItem) {
-        return state // Don't add duplicate items
+        // Allow multiple quantities of the same item
+        const updatedItems = currentItems.map((item) =>
+          item.id === action.payload.id
+            ? { ...item, quantity: (item.quantity || 1) + 1 }
+            : item
+        )
+        const total = updatedItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
+        return {
+          items: updatedItems,
+          total,
+          itemCount: updatedItems.length,
+        }
       }
-      const newItems = [...currentItems, action.payload]
-      const total = newItems.reduce((sum, item) => sum + item.price, 0)
+      const newItems = [...currentItems, { ...action.payload, quantity: 1 }]
+      const total = newItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
       return {
         items: newItems,
         total,
@@ -62,12 +74,29 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       }
     }
     case "REMOVE_ITEM": {
-      const newItems = currentItems.filter((item) => item.id !== action.payload)
-      const total = newItems.reduce((sum, item) => sum + item.price, 0)
-      return {
-        items: newItems,
-        total,
-        itemCount: newItems.length,
+      const itemToRemove = currentItems.find((item) => item.id === action.payload)
+      if (itemToRemove && (itemToRemove.quantity || 1) > 1) {
+        // Decrease quantity if more than 1
+        const updatedItems = currentItems.map((item) =>
+          item.id === action.payload
+            ? { ...item, quantity: (item.quantity || 1) - 1 }
+            : item
+        )
+        const total = updatedItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
+        return {
+          items: updatedItems,
+          total,
+          itemCount: updatedItems.length,
+        }
+      } else {
+        // Remove item completely if quantity is 1 or undefined
+        const newItems = currentItems.filter((item) => item.id !== action.payload)
+        const total = newItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
+        return {
+          items: newItems,
+          total,
+          itemCount: newItems.length,
+        }
       }
     }
     case "CLEAR_CART":

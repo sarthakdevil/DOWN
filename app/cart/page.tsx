@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import couponsDataRaw from "@/data/coupons.json"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -10,6 +10,7 @@ import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 import RazorpayCheckout from "@/components/razorpay-checkout"
+import { useSearchParams } from "next/navigation"
 
 // Coupon type based on provided structure
 type Coupon = {
@@ -24,11 +25,37 @@ const couponsData: Coupon[] = Array.isArray(couponsDataRaw) ? couponsDataRaw : [
 export default function CartPage() {
   const { state, dispatch } = useCart()
   const { theme } = useTheme()
+  const searchParams = useSearchParams()
   const [couponCode, setCouponCode] = useState("")
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [discount, setDiscount] = useState(0)
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null)
   const [hasItemsInCheckout, setHasItemsInCheckout] = useState(false) // Track if checkout was opened with items
+
+  // Check for addPlan URL parameter when search params change
+  useEffect(() => {
+    const addPlanParams = searchParams.getAll('addPlan')
+
+    if (addPlanParams.length > 0) {
+      addPlanParams.forEach((param: string) => {
+        try {
+          const cartItem = JSON.parse(param)
+          if (cartItem) {
+            // Add the item to cart
+            dispatch({ type: "ADD_ITEM", payload: cartItem })
+          }
+        } catch (error) {
+          console.error('Error parsing addPlan parameter:', error)
+        }
+      })
+
+      // Clean up URL after processing all items by removing the addPlan parameter
+      const newSearchParams = new URLSearchParams(searchParams)
+      newSearchParams.delete('addPlan')
+      const newUrl = `${window.location.pathname}${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`
+      window.history.replaceState({}, '', newUrl)
+    }
+  }, [searchParams, dispatch])
 
   const removeFromCart = (id: string) => {
     dispatch({ type: "REMOVE_ITEM", payload: id })
@@ -71,7 +98,7 @@ export default function CartPage() {
   }
 
   // Calculate totals
-  const subtotal = state.items.reduce((sum, item) => sum + (item.price || 0), 0)
+  const subtotal = state.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
   const finalTotal = subtotal - discount
 
   return (
@@ -132,7 +159,7 @@ export default function CartPage() {
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={cn("text-xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")}>
-                        ₹{item.price}
+                        ₹{item.price} {item.quantity && item.quantity > 1 ? `× ${item.quantity}` : ''}
                       </span>
                       <Button
                         variant="outline"
@@ -143,7 +170,7 @@ export default function CartPage() {
                           theme === "dark" && "border-gray-600 text-gray-400 hover:bg-red-900/20",
                         )}
                       >
-                        Remove
+                        {item.quantity && item.quantity > 1 ? 'Remove One' : 'Remove'}
                       </Button>
                     </div>
                   </div>
@@ -170,8 +197,12 @@ export default function CartPage() {
                   <span className="text-gray-400">Service Charges</span>
                   {state.items.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className={cn(theme === "dark" ? "text-white" : "text-gray-900")}>{item.title}</span>
-                      <span className={cn(theme === "dark" ? "text-white" : "text-gray-900")}>₹{item.price}</span>
+                      <span className={cn(theme === "dark" ? "text-white" : "text-gray-900")}>
+                        {item.title} {item.quantity && item.quantity > 1 ? `(×${item.quantity})` : ''}
+                      </span>
+                      <span className={cn(theme === "dark" ? "text-white" : "text-gray-900")}>
+                        ₹{item.price * (item.quantity || 1)}
+                      </span>
                     </div>
                   ))}
                 </div>

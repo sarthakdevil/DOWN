@@ -167,9 +167,10 @@ export default function Home() {
         id: plan.id,
         title: plan.title,
         price: plan.price,
-        icon: "logo.jpg",
+        icon: "/placeholder-logo.png",
         category: plan.period || "Plan",
         href: plan.google_form_url,
+        quantity: 1,
       },
     })
 
@@ -180,6 +181,32 @@ export default function Home() {
 
     setAddedToCart(plan.id)
     setTimeout(() => setAddedToCart(null), 2000)
+  }
+
+  const buyNow = (plan: Plan) => {
+    // Add to cart
+    dispatch({
+      type: "ADD_ITEM",
+      payload: {
+        id: plan.id,
+        title: plan.title,
+        price: plan.price,
+        icon: "/placeholder-logo.png",
+        category: plan.period || "Plan",
+        href: plan.google_form_url,
+        quantity: 1,
+      },
+    })
+
+    // Save plans to persistent storage
+    if (plans.length > 0) {
+      savePlansToStorage(plans)
+    }
+
+    // Redirect to cart page
+    if (typeof window !== 'undefined') {
+      window.location.href = '/cart'
+    }
   }
 
   return (
@@ -350,6 +377,19 @@ export default function Home() {
                   ) : (
                     "Add to Cart"
                   )}
+                </Button>
+
+                <Button
+                  onClick={() => buyNow(plan)}
+                  variant="outline"
+                  className={cn(
+                    "w-full rounded-full py-3 font-medium transition-all duration-300 mt-3",
+                    theme === "dark"
+                      ? "border-gray-600 text-gray-300 hover:bg-gray-700"
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50",
+                  )}
+                >
+                  Buy Now
                 </Button>
                 {addedToCart === plan.id && (
                   <div className="mt-3 md:hidden">
