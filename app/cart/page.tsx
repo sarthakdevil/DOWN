@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import couponsDataRaw from "@/data/coupons.json"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -12,17 +12,9 @@ import { cn } from "@/lib/utils"
 import RazorpayCheckout from "@/components/razorpay-checkout"
 import { useSearchParams } from "next/navigation"
 
-// Coupon type based on provided structure
-type Coupon = {
-  id: string
-  code: string
-  description: string
-  discount: number
-}
-
 const couponsData: Coupon[] = Array.isArray(couponsDataRaw) ? couponsDataRaw : []
 
-export default function CartPage() {
+function CartContent() {
   const { state, dispatch } = useCart()
   const { theme } = useTheme()
   const searchParams = useSearchParams()
@@ -75,7 +67,7 @@ export default function CartPage() {
     const coupon = couponsData.find((c) => c.code.toUpperCase() === couponCode.trim().toUpperCase())
     if (coupon) {
       // Calculate discount as percentage of subtotal
-      const subtotal = state.items.reduce((sum, item) => sum + (item.price || 0), 0)
+      const subtotal = state.items.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
       const discountAmount = Math.round((subtotal * coupon.discount) / 100)
       setDiscount(discountAmount)
       setAppliedCoupon(coupon.code)
@@ -284,5 +276,21 @@ export default function CartPage() {
         />
       )}
     </div>
+  )
+}
+
+// Coupon type based on provided structure
+type Coupon = {
+  id: string
+  code: string
+  description: string
+  discount: number
+}
+
+export default function CartPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CartContent />
+    </Suspense>
   )
 }
