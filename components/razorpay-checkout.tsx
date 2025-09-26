@@ -189,6 +189,18 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
         console.log("[DEBUG] Setting showGoogleForms to true")
         setShowGoogleForms(true)
         
+        // TEMPORARY WORKAROUND: Show alerts with form URLs
+        console.log("[DEBUG] Showing alerts with form URLs for free plans")
+        plansWithForms.forEach((plan, index) => {
+          setTimeout(() => {
+            if (plan.googleFormUrl && plan.googleFormUrl !== "#") {
+              alert(`🎉 Free Plan: ${plan.title}\n\nForm URL: ${plan.googleFormUrl}\n\nCopy this URL and open it in a new tab to complete your dating profile!`)
+            } else {
+              alert(`⚠️ Free Plan: ${plan.title}\n\nNo form URL configured yet. Please contact support.`)
+            }
+          }, index * 1000) // Stagger alerts by 1 second each
+        })
+        
         console.log("[DEBUG] Current state - showGoogleForms should be true")
         setIsLoading(false)
         return
@@ -264,6 +276,18 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
             setPurchasedPlans(plansWithForms)
             dispatch({ type: "CLEAR_CART" })
             setShowGoogleForms(true)
+            
+            // TEMPORARY WORKAROUND: Show alerts with form URLs
+            console.log("[DEBUG] Showing alerts with form URLs for paid plans")
+            plansWithForms.forEach((plan, index) => {
+              setTimeout(() => {
+                if (plan.googleFormUrl && plan.googleFormUrl !== "#") {
+                  alert(`🎉 Payment Successful!\n\nPlan: ${plan.title}\n\nForm URL: ${plan.googleFormUrl}\n\nCopy this URL and open it in a new tab to complete your dating profile!`)
+                } else {
+                  alert(`⚠️ Payment Successful!\n\nPlan: ${plan.title}\n\nNo form URL configured yet. Please contact support.`)
+                }
+              }, index * 1000) // Stagger alerts by 1 second each
+            })
           } catch (error) {
             console.error("Payment error:", error)
             alert("Payment failed. Please contact support.")
