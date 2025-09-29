@@ -7,12 +7,30 @@ import Footer from "@/components/footer"
 import { CartProvider } from "@/contexts/cart-context"
 import { ThemeProvider } from "@/contexts/theme-context"
 import { Analytics } from "@vercel/analytics/next"
+
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "LoveConnect | Find Your Match",
   description: "The most exciting dating experience in your city",
-    generator: 'v0.app'
+  icons: {
+    icon: '/logo.jpg',
+  },
+  openGraph: {
+    title: "Downdating | Find Your Match",
+    description: "The most exciting dating experience in your city",
+    url: 'https://downdating.in', // Replace with your actual URL
+    siteName: 'LoveConnect',
+    images: [
+      {
+        url: '/logo.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'LoveConnect Logo',
+      },
+    ],
+    type: 'website',
+  }
 }
 
 export default function RootLayout({
@@ -22,6 +40,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'LoveConnect',
+              url: 'https://yourwebsite.com', // Replace with your actual URL
+              logo: 'https://yourwebsite.com/logo.jpg', // Replace with your actual URL
+              description: 'The most exciting dating experience in your city',
+            }),
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <ThemeProvider>
           <CartProvider>
