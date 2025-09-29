@@ -11,7 +11,7 @@ import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "LoveConnect | Find Your Match",
+  title: "Downdating | Find Your Match",
   description: "The most exciting dating experience in your city",
   icons: {
     icon: '/logo.jpg',
