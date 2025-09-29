@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     title: "Downdating | Find Your Match",
     description: "The most exciting dating experience in your city",
     url: 'https://downdating.in', // Replace with your actual URL
-    siteName: 'LoveConnect',
+    siteName: 'Downdating',
     images: [
       {
         url: '/logo.jpg',
         width: 1200,
         height: 630,
-        alt: 'LoveConnect Logo',
+        alt: 'Downdating Logo',
       },
     ],
     type: 'website',
