@@ -14,23 +14,23 @@ export const metadata: Metadata = {
   title: "Downdating | Find Your Match",
   description: "The most exciting dating experience in your city",
   icons: {
-    icon: '/logo.jpg',
+    icon: "https://downdating.in/logo.jpg",
   },
   openGraph: {
     title: "Downdating | Find Your Match",
     description: "The most exciting dating experience in your city",
-    url: 'https://downdating.in', // Replace with your actual URL
-    siteName: 'Downdating',
+    url: "https://downdating.in",
+    siteName: "Downdating",
     images: [
       {
-        url: '/logo.jpg',
+        url: "https://downdating.in/logo.jpg",
         width: 1200,
         height: 630,
-        alt: 'Downdating Logo',
+        alt: "Downdating Logo",
       },
     ],
-    type: 'website',
-  }
+    type: "website",
+  },
 }
 
 export default function RootLayout({
@@ -45,12 +45,16 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'Organization',
-              name: 'LoveConnect',
-              url: 'https://yourwebsite.com', // Replace with your actual URL
-              logo: 'https://yourwebsite.com/logo.jpg', // Replace with your actual URL
-              description: 'The most exciting dating experience in your city',
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Downdating",
+              url: "https://downdating.in",
+              logo: "https://downdating.in/logo.jpg",
+              description: "The most exciting dating experience in your city",
+              sameAs: [
+                "https://www.facebook.com/downdating",
+                "https://www.instagram.com/downdating",
+              ],
             }),
           }}
         />
