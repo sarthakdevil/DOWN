@@ -52,8 +52,7 @@ export default function RootLayout({
               logo: "https://downdating.in/logo.jpg",
               description: "The most exciting dating experience in your city",
               sameAs: [
-                "https://www.facebook.com/downdating",
-                "https://www.instagram.com/downdating",
+                "https://www.instagram.com/downdating.show",
               ],
             }),
           }}
