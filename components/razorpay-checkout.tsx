@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import axios from "axios"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -451,6 +452,46 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
                   required
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Legal Links */}
+          <div className={cn(
+            "text-xs text-center space-y-2 py-3 border-t",
+            theme === "dark" ? "text-gray-400 border-gray-600" : "text-gray-500 border-gray-200"
+          )}>
+            <p>By proceeding, you agree to our</p>
+            <div className="flex justify-center gap-4 flex-wrap">
+              <Link 
+                href="/terms" 
+                target="_blank"
+                className={cn(
+                  "underline hover:no-underline transition-colors",
+                  theme === "dark" ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"
+                )}
+              >
+                Terms of Service
+              </Link>
+              <Link 
+                href="/privacy" 
+                target="_blank"
+                className={cn(
+                  "underline hover:no-underline transition-colors",
+                  theme === "dark" ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"
+                )}
+              >
+                Privacy Policy
+              </Link>
+              <Link 
+                href="/refund-policy" 
+                target="_blank"
+                className={cn(
+                  "underline hover:no-underline transition-colors",
+                  theme === "dark" ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"
+                )}
+              >
+                Refund Policy
+              </Link>
             </div>
           </div>
 
