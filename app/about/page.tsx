@@ -84,7 +84,7 @@ export default function AboutPage() {
           </div>
           <div className="relative h-80 lg:h-96 rounded-2xl overflow-hidden">
             <Image
-              src="/placeholder.svg?height=400&width=600&text=Campus Event Photo"
+              src="/IMG_4927.jpg"
               alt="Campus event with students holding colorful signs"
               fill
               className="object-cover"

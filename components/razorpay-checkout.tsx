@@ -108,6 +108,12 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
 
   const handleInputChange = (field: keyof CustomerInfo, value: string) => {
     setCustomerInfo((prev) => ({ ...prev, [field]: value }))
+
+    // Save user info to cart context when all fields are filled
+    const updatedInfo = { ...customerInfo, [field]: value }
+    if (updatedInfo.name && updatedInfo.email && updatedInfo.phone) {
+      dispatch({ type: "SET_USER_INFO", payload: updatedInfo })
+    }
   }
 
   const loadRazorpayScript = () => {
@@ -120,26 +126,57 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
     })
   }
 
-  const redirectToSuccessPage = (cartItems: any[]) => {
-    const plansWithForms = cartItems.map((item) => {
-      const planData = plans.find((plan: Plan) => plan.id === item.id)
-      return {
-        ...item,
-        googleFormUrl: planData?.google_form_url || "#",
+  const redirectToSuccessPage = async (cartItems: any[]) => {
+    try {
+      // Fetch Google Form URLs for the purchased plans
+      const planIds = cartItems.map((item) => item.id)
+      const response = await fetch('/api/getforms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ planIds })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch form URLs')
       }
-    })
 
-    const planIds = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.id)))
-    const planTitles = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.title)))
-    const planPrices = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.price)))
-    const planFormUrls = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.googleFormUrl)))
-    const name = encodeURIComponent(customerInfo.name)
-    const email = encodeURIComponent(customerInfo.email)
-    const phone = encodeURIComponent(customerInfo.phone)
+      const { forms } = await response.json()
+      
+      const plansWithForms = cartItems.map((item) => {
+        const formData = forms.find((form: any) => form.id === item.id)
+        return {
+          ...item,
+          googleFormUrl: formData?.google_form_url || "#",
+        }
+      })
 
-    const successUrl = `/payment-success?planIds=${planIds}&planTitles=${planTitles}&planPrices=${planPrices}&planFormUrls=${planFormUrls}&amount=${amount}&name=${name}&email=${email}&phone=${phone}`
+      const planIdsParam = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.id)))
+      const planTitles = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.title)))
+      const planPrices = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.price)))
+      const planFormUrls = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.googleFormUrl)))
+      const name = encodeURIComponent(customerInfo.name)
+      const email = encodeURIComponent(customerInfo.email)
+      const phone = encodeURIComponent(customerInfo.phone)
 
-    window.location.href = successUrl
+      const successUrl = `/payment-success?planIds=${planIdsParam}&planTitles=${planTitles}&planPrices=${planPrices}&planFormUrls=${planFormUrls}&amount=${amount}&name=${name}&email=${email}&phone=${phone}`
+
+      window.location.href = successUrl
+    } catch (error) {
+      console.error('Error fetching form URLs:', error)
+      // Fallback without form URLs
+      const planIdsParam = encodeURIComponent(JSON.stringify(cartItems.map((p) => p.id)))
+      const planTitles = encodeURIComponent(JSON.stringify(cartItems.map((p) => p.title)))
+      const planPrices = encodeURIComponent(JSON.stringify(cartItems.map((p) => p.price)))
+      const name = encodeURIComponent(customerInfo.name)
+      const email = encodeURIComponent(customerInfo.email)
+      const phone = encodeURIComponent(customerInfo.phone)
+
+      const successUrl = `/payment-success?planIds=${planIdsParam}&planTitles=${planTitles}&planPrices=${planPrices}&amount=${amount}&name=${name}&email=${email}&phone=${phone}&error=forms`
+
+      window.location.href = successUrl
+    }
   }
 
   const handlePayment = async () => {
@@ -156,38 +193,39 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
       if (amount === 0) {
         console.log("[DEBUG] Processing free plan checkout")
 
-        // For free plans, skip payment and go directly to success page
-        const applicationResponse = await fetch("/api/submit-application", {
+        // For free plans, use verify-payment route with free payment IDs
+        const verifyResponse = await fetch("/api/verify-payment", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name: customerInfo.name,
-            email: customerInfo.email,
-            phone: customerInfo.phone,
             razorpay_order_id: "free",
             razorpay_payment_id: "free",
-            plan_ids: JSON.stringify(state.items.map((item) => item.id)),
-            plan_titles: JSON.stringify(state.items.map((item) => item.title)),
-            total_amount: amount,
-            payment_status: "completed",
+            cartItems: state.items,
+            customerInfo: {
+              name: customerInfo.name,
+              email: customerInfo.email,
+              phone: customerInfo.phone,
+            }
           }),
         })
 
-        const applicationResult = await applicationResponse.json()
-        console.log("[DEBUG] Application save result:", applicationResult)
+        const verifyResult = await verifyResponse.json()
+        console.log("[DEBUG] Verify result:", verifyResult)
 
-        if (!applicationResult.success) {
-          console.error("[ERROR] Failed to save application:", applicationResult.error)
+        if (!verifyResult.success) {
+          console.error("[ERROR] Failed to process free plan:", verifyResult.error)
           alert("Failed to process your request. Please try again.")
           setIsLoading(false)
           return
         }
 
+        console.log("Free plan processed and invoices sent:", verifyResult.invoices)
+
         console.log("[DEBUG] Clearing cart and redirecting to success page")
         dispatch({ type: "CLEAR_CART" })
-        redirectToSuccessPage(state.items)
+        await redirectToSuccessPage(state.items)
         onClose()
         setIsLoading(false)
         return
@@ -234,32 +272,35 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
         },
         handler: async (response: any) => {
           try {
-            // Save application to database
-            const applicationResponse = await fetch("/api/submit-application", {
+            // Use verify-payment route which handles payment verification, database storage, and invoice generation
+            const verifyResponse = await fetch("/api/verify-payment", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                name: customerInfo.name,
-                email: customerInfo.email,
-                phone: customerInfo.phone,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
-                plan_ids: JSON.stringify(state.items.map((item) => item.id)),
-                plan_titles: JSON.stringify(state.items.map((item) => item.title)),
-                total_amount: amount,
-                payment_status: "completed",
+                cartItems: state.items,
+                customerInfo: {
+                  name: customerInfo.name,
+                  email: customerInfo.email,
+                  phone: customerInfo.phone,
+                }
               }),
             })
 
-            const applicationResult = await applicationResponse.json()
-            if (!applicationResult.success) {
-              console.error("Failed to save application:", applicationResult.error)
+            const verifyResult = await verifyResponse.json()
+            if (!verifyResult.success) {
+              console.error("Payment verification failed:", verifyResult.error)
+              alert("Payment verification failed. Please contact support.")
+              return
             }
 
+            console.log("Payment verified and invoices processed:", verifyResult.invoices)
+
             dispatch({ type: "CLEAR_CART" })
-            redirectToSuccessPage(state.items)
+            await redirectToSuccessPage(state.items)
             onClose()
           } catch (error) {
             console.error("Payment error:", error)

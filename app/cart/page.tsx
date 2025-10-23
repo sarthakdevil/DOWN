@@ -139,8 +139,16 @@ function CartContent() {
                     )}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center justify-center w-16 h-16 bg-red-600 rounded-full">
-                        <span className="text-white font-bold text-sm">{item.icon}</span>
+                      <div className="flex items-center justify-center w-16 h-16 bg-red-600 rounded-full overflow-hidden">
+                        {item.icon && item.icon.startsWith('/') ? (
+                          <img 
+                            src={item.icon} 
+                            alt={item.title}
+                            className="w-8 h-8 object-contain rounded-full"
+                          />
+                        ) : (
+                          <span className="text-white font-bold text-sm round">{item.icon || "💝"}</span>
+                        )}
                       </div>
                       <div>
                         <h3 className={cn("font-bold text-lg", theme === "dark" ? "text-white" : "text-gray-900")}>

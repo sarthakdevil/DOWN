@@ -12,11 +12,6 @@ export async function POST(request: NextRequest) {
 
     const response = await razorpay.payments.capture(paymentId, amount * 100, "INR")
 
-    console.log("Razorpay payment captured:", {
-      paymentId: response.id,
-      amount: response.amount,
-      status: response.status,
-    })
 
     return NextResponse.json({ success: true, payment: response })
   } catch (error) {

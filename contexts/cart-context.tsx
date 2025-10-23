@@ -9,14 +9,20 @@ interface CartItem {
   price: number
   icon: string
   category: string
-  href: string
   quantity?: number
+}
+
+interface UserInfo {
+  name: string
+  email: string
+  phone: string
 }
 
 interface CartState {
   items: CartItem[]
   total: number
   itemCount: number
+  userInfo: UserInfo | null
 }
 
 type CartAction =
@@ -24,6 +30,7 @@ type CartAction =
   | { type: "REMOVE_ITEM"; payload: string }
   | { type: "CLEAR_CART" }
   | { type: "LOAD_CART"; payload: CartItem[] }
+  | { type: "SET_USER_INFO"; payload: UserInfo }
 
 const CartContext = createContext<{
   state: CartState
@@ -43,6 +50,19 @@ const getCartFromLocalStorage = (): CartItem[] => {
   return []
 }
 
+const getUserInfoFromLocalStorage = (): UserInfo | null => {
+  const savedUserInfo = localStorage.getItem("downdating-user-info")
+  if (savedUserInfo) {
+    try {
+      return JSON.parse(savedUserInfo)
+    } catch (error) {
+      console.error("Error parsing user info from localStorage:", error)
+      return null
+    }
+  }
+  return null
+}
+
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   // Always check localStorage for latest data
   const localStorageItems = getCartFromLocalStorage()
@@ -60,6 +80,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         )
         const total = updatedItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
         return {
+          ...state,
           items: updatedItems,
           total,
           itemCount: updatedItems.length,
@@ -68,6 +89,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       const newItems = [...currentItems, { ...action.payload, quantity: 1 }]
       const total = newItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
       return {
+        ...state,
         items: newItems,
         total,
         itemCount: newItems.length,
@@ -84,6 +106,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         )
         const total = updatedItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
         return {
+          ...state,
           items: updatedItems,
           total,
           itemCount: updatedItems.length,
@@ -93,6 +116,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         const newItems = currentItems.filter((item) => item.id !== action.payload)
         const total = newItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0)
         return {
+          ...state,
           items: newItems,
           total,
           itemCount: newItems.length,
@@ -101,6 +125,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     case "CLEAR_CART":
       return {
+        ...state,
         items: [],
         total: 0,
         itemCount: 0,
@@ -108,9 +133,15 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     case "LOAD_CART":
       const total = action.payload.reduce((sum, item) => sum + item.price, 0)
       return {
+        ...state,
         items: action.payload,
         total,
         itemCount: action.payload.length,
+      }
+    case "SET_USER_INFO":
+      return {
+        ...state,
+        userInfo: action.payload,
       }
     default:
       return state
@@ -122,13 +153,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     items: [],
     total: 0,
     itemCount: 0,
+    userInfo: null,
   })
 
-  // Load cart from localStorage on mount
+  // Load cart and user info from localStorage on mount
   useEffect(() => {
     const cartItems = getCartFromLocalStorage()
     if (cartItems.length > 0) {
       dispatch({ type: "LOAD_CART", payload: cartItems })
+    }
+
+    const userInfo = getUserInfoFromLocalStorage()
+    if (userInfo) {
+      dispatch({ type: "SET_USER_INFO", payload: userInfo })
     }
   }, [])
 
@@ -136,6 +173,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem("downdating-cart", JSON.stringify(state.items))
   }, [state.items])
+
+  // Save user info to localStorage whenever it changes
+  useEffect(() => {
+    if (state.userInfo) {
+      localStorage.setItem("downdating-user-info", JSON.stringify(state.userInfo))
+    } else {
+      localStorage.removeItem("downdating-user-info")
+    }
+  }, [state.userInfo])
 
   return <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>
 }

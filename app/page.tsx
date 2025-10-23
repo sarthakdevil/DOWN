@@ -21,7 +21,6 @@ interface Plan {
   features: string[]
   popular: boolean
   color: string
-  google_form_url: string
 }
 export default function Home() {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null)
@@ -64,7 +63,7 @@ export default function Home() {
   }
 
   const forceClearCache = () => {
-    console.log('Force clearing plans cache...')
+
     localStorage.removeItem(PLANS_STORAGE_KEY)
     localStorage.removeItem(PLANS_CACHE_KEY)
     // Also clear any other related cache keys
@@ -81,11 +80,11 @@ export default function Home() {
 
       // Always fetch fresh data from API (skip localStorage)
       try {
-        console.log("Fetching fresh plans from API (cache cleared)")
+
         const response = await axios.get("/api/getplans")
         const data = response.data
         if (data.plans && data.plans.length > 0) {
-          console.log("Setting fresh plans from API:", data.plans)
+
           setPlans(data.plans)
           // Optionally save to storage if you want to keep it for other purposes
           // savePlansToStorage(data.plans)
@@ -167,9 +166,8 @@ export default function Home() {
         id: plan.id,
         title: plan.title,
         price: plan.price,
-        icon: "/placeholder-logo.png",
+        icon: "/logo.jpg",
         category: plan.period || "Plan",
-        href: plan.google_form_url,
         quantity: 1,
       },
     })
@@ -191,9 +189,8 @@ export default function Home() {
         id: plan.id,
         title: plan.title,
         price: plan.price,
-        icon: "/placeholder-logo.png",
+        icon: "/logo.jpg",
         category: plan.period || "Plan",
-        href: plan.google_form_url,
         quantity: 1,
       },
     })

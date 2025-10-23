@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const planId = params.planId;
-    console.log('Received planId:', planId);
+
     if (!planId) {
       return NextResponse.redirect(new URL('/', request.url));
     }
@@ -34,7 +34,7 @@ export async function GET(
       id: plan.id,
       title: plan.title,
       price: plan.price,
-      icon: "/placeholder-logo.png",
+      icon: "/logo.jpg",
       category: plan.period || "Plan",
       href: plan.google_form_url,
       quantity: 1,
