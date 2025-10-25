@@ -315,6 +315,9 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
         },
       }
 
+      // Close the checkout dialog before opening Razorpay
+      onClose()
+
       // Open Razorpay checkout
       const razorpay = new window.Razorpay(options)
       razorpay.open()
