@@ -1,19 +1,19 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Create Supabase client with service role to bypass RLS
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!, // Use service role key (JWT token)
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
-
 export async function POST(request: NextRequest) {
+  // Create Supabase client inside function to avoid build-time issues
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
+
   try {
     const formData = await request.formData();
 
@@ -149,6 +149,18 @@ export async function POST(request: NextRequest) {
 
 // GET endpoint
 export async function GET(request: NextRequest) {
+  // Create Supabase client inside function to avoid build-time issues
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
+
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email");
