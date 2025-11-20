@@ -1,32 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import axios from "axios"
-import Link from "next/link"
+import type React from "react"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, CreditCard } from "lucide-react"
+import { Loader2, QrCode, Upload, Check } from "lucide-react"
 import { useCart } from "@/contexts/cart-context"
 import { useTheme } from "@/contexts/theme-context"
 import { cn } from "@/lib/utils"
 
-interface Plan {
-  id: string
-  title: string
-  price: number
-  originalPrice?: number
-  currency: string
-  period: string
-  description: string
-  features: string[]
-  popular: boolean
-  color: string
-  google_form_url: string
-}
-
-interface RazorpayCheckoutProps {
+interface QRPaymentCheckoutProps {
   isOpen: boolean
   onClose: () => void
   amount: number
@@ -38,15 +24,14 @@ interface CustomerInfo {
   phone: string
 }
 
-declare global {
-  interface Window {
-    Razorpay: any
-  }
-}
+const QR_CODE_IMAGE = "/WhatsApp Image 2025-11-19 at 23.08.35_4a1a2672.jpg"
+const PAYMENT_ID = "s36448@ptaxis"
 
-export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCheckoutProps) {
+export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPaymentCheckoutProps) {
+  const [stage, setStage] = useState<"qr" | "upload" | "success">("qr")
   const [isLoading, setIsLoading] = useState(false)
-  const [plans, setPlans] = useState<Plan[]>([])
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>("")
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: "",
     email: "",
@@ -55,287 +40,113 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
   const { state, dispatch } = useCart()
   const { theme } = useTheme()
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      // Try persistent storage first
-      const savedPlans = localStorage.getItem("downdating-plans-data")
-      if (savedPlans) {
-        try {
-          const parsedPlans = JSON.parse(savedPlans)
-          if (parsedPlans.length > 0 && plans.length === 0) {
-            console.log("[CHECKOUT] Loading plans from persistent storage:", parsedPlans)
-            setPlans(parsedPlans)
-            return
-          }
-        } catch (error) {
-          console.error("[CHECKOUT] Error parsing saved plans:", error)
-        }
-      }
-
-      // Try cache next
-      const cachedPlans = localStorage.getItem("downdating-plans-cache")
-      if (cachedPlans) {
-        try {
-          const parsedPlans = JSON.parse(cachedPlans)
-          if (parsedPlans.length > 0 && plans.length === 0) {
-            console.log("[CHECKOUT] Loading plans from cache:", parsedPlans)
-            setPlans(parsedPlans)
-            return
-          }
-        } catch (error) {
-          console.error("[CHECKOUT] Error parsing cached plans:", error)
-        }
-      }
-
-      // Finally fetch from API
-      try {
-        console.log("[CHECKOUT] Fetching plans from API")
-        const response = await axios.get("/api/getplans")
-        const data = response.data
-        if (data.plans && data.plans.length > 0 && plans.length === 0) {
-          console.log("[CHECKOUT] Setting plans from API:", data.plans)
-          setPlans(data.plans)
-          // Save to both persistent and cache storage
-          const plansData = JSON.stringify(data.plans)
-          localStorage.setItem("downdating-plans-data", plansData)
-          localStorage.setItem("downdating-plans-cache", plansData)
-        }
-      } catch (error) {
-        console.error("[CHECKOUT] Error fetching plans:", error)
-      }
-    }
-    fetchPlans()
-  }, [plans.length])
-
   const handleInputChange = (field: keyof CustomerInfo, value: string) => {
     setCustomerInfo((prev) => ({ ...prev, [field]: value }))
-
-    // Save user info to cart context when all fields are filled
     const updatedInfo = { ...customerInfo, [field]: value }
     if (updatedInfo.name && updatedInfo.email && updatedInfo.phone) {
       dispatch({ type: "SET_USER_INFO", payload: updatedInfo })
     }
   }
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script")
-      script.src = "https://checkout.razorpay.com/v1/checkout.js"
-      script.onload = () => resolve(true)
-      script.onerror = () => resolve(false)
-      document.body.appendChild(script)
-    })
-  }
-
-  const redirectToSuccessPage = async (cartItems: any[]) => {
-    try {
-      // Fetch Google Form URLs for the purchased plans
-      const planIds = cartItems.map((item) => item.id)
-      const response = await fetch('/api/getforms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ planIds })
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch form URLs')
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload an image file")
+        return
       }
 
-      const { forms } = await response.json()
-      
-      const plansWithForms = cartItems.map((item) => {
-        const formData = forms.find((form: any) => form.id === item.id)
-        return {
-          ...item,
-          googleFormUrl: formData?.google_form_url || "#",
-        }
-      })
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB")
+        return
+      }
 
-      const planIdsParam = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.id)))
-      const planTitles = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.title)))
-      const planPrices = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.price)))
-      const planFormUrls = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.googleFormUrl)))
-      const name = encodeURIComponent(customerInfo.name)
-      const email = encodeURIComponent(customerInfo.email)
-      const phone = encodeURIComponent(customerInfo.phone)
+      setUploadedFile(file)
 
-      const successUrl = `/payment-success?planIds=${planIdsParam}&planTitles=${planTitles}&planPrices=${planPrices}&planFormUrls=${planFormUrls}&amount=${amount}&name=${name}&email=${email}&phone=${phone}`
-
-      window.location.href = successUrl
-    } catch (error) {
-      console.error('Error fetching form URLs:', error)
-      // Fallback without form URLs
-      const planIdsParam = encodeURIComponent(JSON.stringify(cartItems.map((p) => p.id)))
-      const planTitles = encodeURIComponent(JSON.stringify(cartItems.map((p) => p.title)))
-      const planPrices = encodeURIComponent(JSON.stringify(cartItems.map((p) => p.price)))
-      const name = encodeURIComponent(customerInfo.name)
-      const email = encodeURIComponent(customerInfo.email)
-      const phone = encodeURIComponent(customerInfo.phone)
-
-      const successUrl = `/payment-success?planIds=${planIdsParam}&planTitles=${planTitles}&planPrices=${planPrices}&amount=${amount}&name=${name}&email=${email}&phone=${phone}&error=forms`
-
-      window.location.href = successUrl
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setPreviewUrl(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
     }
   }
 
-  const handlePayment = async () => {
+  const handleProceedToUpload = () => {
     if (!customerInfo.name || !customerInfo.email || !customerInfo.phone) {
       alert("Please fill in all customer details")
       return
     }
+    setStage("upload")
+  }
+
+  const handleSubmitScreenshot = async () => {
+    if (!uploadedFile) {
+      alert("Please select a payment screenshot")
+      return
+    }
 
     setIsLoading(true)
-    console.log("[DEBUG] Starting payment process. Amount:", amount)
-    console.log("[DEBUG] Cart items:", state.items)
 
     try {
-      if (amount === 0) {
-        console.log("[DEBUG] Processing free plan checkout")
+      // Prepare form data for submission
+      const formData = new FormData()
+      formData.append("screenshot", uploadedFile)
+      formData.append("name", customerInfo.name)
+      formData.append("email", customerInfo.email)
+      formData.append("phone", customerInfo.phone)
+      formData.append("plan_ids", JSON.stringify(state.items.map(item => item.id)))
+      formData.append("plan_titles", JSON.stringify(state.items.map(item => item.title)))
+      formData.append("total_amount", amount.toString())
+      formData.append("payment_status", "pending")
 
-        // For free plans, use verify-payment route with free payment IDs
-        const verifyResponse = await fetch("/api/verify-payment", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            razorpay_order_id: "free",
-            razorpay_payment_id: "free",
-            cartItems: state.items,
-            customerInfo: {
-              name: customerInfo.name,
-              email: customerInfo.email,
-              phone: customerInfo.phone,
-            }
-          }),
-        })
-
-        const verifyResult = await verifyResponse.json()
-        console.log("[DEBUG] Verify result:", verifyResult)
-
-        if (!verifyResult.success) {
-          console.error("[ERROR] Failed to process free plan:", verifyResult.error)
-          alert("Failed to process your request. Please try again.")
-          setIsLoading(false)
-          return
-        }
-
-        console.log("Free plan processed and invoices sent:", verifyResult.invoices)
-
-        console.log("[DEBUG] Clearing cart and redirecting to success page")
-        dispatch({ type: "CLEAR_CART" })
-        await redirectToSuccessPage(state.items)
-        onClose()
-        setIsLoading(false)
-        return
-      }
-
-      // Load Razorpay script for paid plans
-      const scriptLoaded = await loadRazorpayScript()
-      if (!scriptLoaded) {
-        throw new Error("Failed to load Razorpay script")
-      }
-
-      // Create order
-      const orderResponse = await fetch("/api/create-order", {
+      // Submit to API
+      const response = await fetch("/api/submit-application", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount,
-          planIds: state.items.map((item) => item.id),
-        }),
+        body: formData,
       })
 
-      const orderData = await orderResponse.json()
-      if (!orderData.success) {
-        throw new Error(orderData.error || "Failed to create order")
+      const result = await response.json()
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to submit application")
       }
 
-      // Configure Razorpay options
-      const options = {
-        key: process.env.RAZORPAY_KEY_ID,
-        amount: orderData.order.amount,
-        currency: orderData.order.currency,
-        name: "DownDating",
-        description: "Dating Plans Purchase",
-        order_id: orderData.order.id,
-        prefill: {
-          name: customerInfo.name,
-          email: customerInfo.email,
-          contact: customerInfo.phone,
-        },
-        theme: {
-          color: "#dc2626", // Red color matching your brand
-        },
-        handler: async (response: any) => {
-          try {
-            // Use verify-payment route which handles payment verification, database storage, and invoice generation
-            const verifyResponse = await fetch("/api/verify-payment", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                cartItems: state.items,
-                customerInfo: {
-                  name: customerInfo.name,
-                  email: customerInfo.email,
-                  phone: customerInfo.phone,
-                }
-              }),
-            })
+      console.log("Screenshot upload and application submitted successfully:", result)
 
-            const verifyResult = await verifyResponse.json()
-            if (!verifyResult.success) {
-              console.error("Payment verification failed:", verifyResult.error)
-              alert("Payment verification failed. Please contact support.")
-              return
-            }
+      // Process payment successfully
+      dispatch({ type: "CLEAR_CART" })
+      setStage("success")
 
-            console.log("Payment verified and invoices processed:", verifyResult.invoices)
-
-            dispatch({ type: "CLEAR_CART" })
-            await redirectToSuccessPage(state.items)
-            onClose()
-          } catch (error) {
-            console.error("Payment error:", error)
-            alert("Payment failed. Please contact support.")
-          }
-        },
-        modal: {
-          ondismiss: () => {
-            setIsLoading(false)
-          },
-        },
-      }
-
-      // Close the checkout dialog before opening Razorpay
-      onClose()
-
-      // Open Razorpay checkout
-      const razorpay = new window.Razorpay(options)
-      razorpay.open()
+      // Close after 3 seconds
+      setTimeout(() => {
+        onClose()
+        setStage("qr")
+        setUploadedFile(null)
+        setPreviewUrl("")
+      }, 3000)
     } catch (error) {
-      console.error("Payment error:", error)
-      alert("Payment failed. Please try again.")
+      console.error("Upload error:", error)
+      alert("Failed to upload screenshot. Please try again.")
       setIsLoading(false)
     }
   }
 
-  // Debug logging for state changes
-  console.log("[DEBUG] Render - isOpen:", isOpen)
+  const handleReset = () => {
+    setStage("qr")
+    setUploadedFile(null)
+    setPreviewUrl("")
+    setCustomerInfo({ name: "", email: "", phone: "" })
+    onClose()
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleReset}>
       <DialogContent
         className={cn(
-          "w-[95vw] max-w-md mx-auto p-4 sm:p-6 transition-colors duration-300",
+          "w-[95vw] max-w-sm mx-auto p-3 sm:p-4 transition-colors duration-300 max-h-[90vh] overflow-y-auto",
           theme === "dark" ? "bg-[#121212] border-[#333333]" : "bg-white border-gray-200",
         )}
       >
@@ -346,16 +157,16 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
               theme === "dark" ? "text-white" : "text-gray-900",
             )}
           >
-            <CreditCard className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-            Checkout
+            <QrCode className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+            Payment
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-4">
           {/* Order Summary */}
           <div
             className={cn(
-              "rounded-lg p-3 sm:p-4 border",
+              "rounded-lg p-2 sm:p-3 border",
               theme === "dark" ? "bg-[#2a2a2a]/50 border-[#333333]" : "bg-gray-50 border-gray-200",
             )}
           >
@@ -387,143 +198,304 @@ export default function RazorpayCheckout({ isOpen, onClose, amount }: RazorpayCh
             </div>
           </div>
 
-          {/* Customer Information */}
-          <div className="space-y-4">
-            <h3 className={cn("font-semibold text-base sm:text-lg", theme === "dark" ? "text-white" : "text-gray-900")}>
-              Customer Information
-            </h3>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label
-                  htmlFor="name"
-                  className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}
-                >
-                  Full Name *
-                </Label>
-                <Input
-                  id="name"
-                  value={customerInfo.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Enter your full name"
+          {stage === "qr" && (
+            <>
+              {/* Customer Information */}
+              <div className="space-y-4">
+                <h3
                   className={cn(
-                    "h-11 text-base",
-                    theme === "dark" ? "bg-[#2a2a2a] border-[#333333] text-white" : "bg-white border-gray-300",
+                    "font-semibold text-base sm:text-lg",
+                    theme === "dark" ? "text-white" : "text-gray-900",
                   )}
-                  required
-                />
+                >
+                  Customer Information
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="name"
+                      className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}
+                    >
+                      Full Name *
+                    </Label>
+                    <Input
+                      id="name"
+                      value={customerInfo.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      placeholder="Enter your full name"
+                      className={cn(
+                        "h-11 text-base",
+                        theme === "dark" ? "bg-[#2a2a2a] border-[#333333] text-white" : "bg-white border-gray-300",
+                      )}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="email"
+                      className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}
+                    >
+                      Email Address *
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={customerInfo.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      placeholder="Enter your email"
+                      className={cn(
+                        "h-11 text-base",
+                        theme === "dark" ? "bg-[#2a2a2a] border-[#333333] text-white" : "bg-white border-gray-300",
+                      )}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="phone"
+                      className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}
+                    >
+                      Phone Number *
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={customerInfo.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      placeholder="Enter your phone number"
+                      className={cn(
+                        "h-11 text-base",
+                        theme === "dark" ? "bg-[#2a2a2a] border-[#333333] text-white" : "bg-white border-gray-300",
+                      )}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="email"
-                  className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}
-                >
-                  Email Address *
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="Enter your email"
+              {/* QR Code Section */}
+              <div className="space-y-4">
+                <h3
                   className={cn(
-                    "h-11 text-base",
-                    theme === "dark" ? "bg-[#2a2a2a] border-[#333333] text-white" : "bg-white border-gray-300",
+                    "font-semibold text-base sm:text-lg",
+                    theme === "dark" ? "text-white" : "text-gray-900",
                   )}
-                  required
-                />
-              </div>
+                >
+                  Scan & Pay
+                </h3>
+                <div
+                  className={cn(
+                    "rounded-lg p-3 sm:p-4 flex flex-col items-center gap-3 border-2 border-dashed",
+                    theme === "dark" ? "bg-[#2a2a2a]/50 border-[#444444]" : "bg-gray-50 border-gray-300",
+                  )}
+                >
+                  <img
+                    src={QR_CODE_IMAGE || "/placeholder.svg"}
+                    alt="Payment QR Code"
+                    className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg border-4 border-white shadow-lg"
+                  />
+                  <div className="text-center space-y-2">
+                    <p className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}>
+                      Scan this QR code to pay
+                    </p>
+                    <p
+                      className={cn(
+                        "text-xs font-mono p-2 rounded bg-opacity-50",
+                        theme === "dark" ? "bg-[#333333] text-gray-300" : "bg-gray-200 text-gray-700",
+                      )}
+                    >
+                      {PAYMENT_ID}
+                    </p>
+                  </div>
+                </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="phone"
-                  className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}
-                >
-                  Phone Number *
-                </Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={customerInfo.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
-                  placeholder="Enter your phone number"
+                {/* Alternative: Upload Payment Screenshot */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className={cn("flex-1 h-px", theme === "dark" ? "bg-gray-600" : "bg-gray-300")}></div>
+                    <span className={cn("text-xs font-medium px-2", theme === "dark" ? "text-gray-400" : "text-gray-500")}>
+                      OR
+                    </span>
+                    <div className={cn("flex-1 h-px", theme === "dark" ? "bg-gray-600" : "bg-gray-300")}></div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}>
+                      Already have payment screenshot?
+                    </Label>
+                    <div
+                      className={cn(
+                        "rounded-lg p-3 flex flex-col items-center gap-2 border-2 border-dashed cursor-pointer transition-colors",
+                        theme === "dark"
+                          ? "bg-[#2a2a2a]/30 border-[#444444] hover:border-blue-500/50"
+                          : "bg-gray-50 border-gray-300 hover:border-blue-500",
+                      )}
+                    >
+                      <Upload className="h-5 w-5 text-gray-400" />
+                      <label className="text-center cursor-pointer">
+                        <span className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}>
+                          Upload payment screenshot
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            handleFileChange(e)
+                            if (e.target.files?.[0]) {
+                              setStage("upload")
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                      <span className={cn("text-xs", theme === "dark" ? "text-gray-500" : "text-gray-500")}>
+                        PNG, JPG, JPEG (max 5MB)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {stage === "upload" && (
+            <>
+              {/* File Upload Section */}
+              <div className="space-y-4">
+                <h3
                   className={cn(
-                    "h-11 text-base",
-                    theme === "dark" ? "bg-[#2a2a2a] border-[#333333] text-white" : "bg-white border-gray-300",
+                    "font-semibold text-base sm:text-lg",
+                    theme === "dark" ? "text-white" : "text-gray-900",
                   )}
-                  required
-                />
+                >
+                  Upload Payment Screenshot
+                </h3>
+                <p className={cn("text-sm", theme === "dark" ? "text-gray-400" : "text-gray-600")}>
+                  Please upload a screenshot of your successful payment to confirm the transaction.
+                </p>
+
+                {!previewUrl ? (
+                  <div
+                    className={cn(
+                      "rounded-lg p-8 flex flex-col items-center gap-3 border-2 border-dashed cursor-pointer transition-colors",
+                      theme === "dark"
+                        ? "bg-[#2a2a2a]/50 border-[#444444] hover:border-blue-500/50"
+                        : "bg-gray-50 border-gray-300 hover:border-blue-500",
+                    )}
+                  >
+                    <Upload className="h-8 w-8 text-gray-400" />
+                    <label className="text-center cursor-pointer">
+                      <span className={cn("text-sm font-medium", theme === "dark" ? "text-white" : "text-gray-900")}>
+                        Click to upload screenshot
+                      </span>
+                      <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                    </label>
+                    <span className={cn("text-xs", theme === "dark" ? "text-gray-500" : "text-gray-500")}>
+                      PNG, JPG, JPEG (max 5MB)
+                    </span>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div
+                      className={cn(
+                        "rounded-lg overflow-hidden border-2",
+                        theme === "dark" ? "border-[#333333]" : "border-gray-200",
+                      )}
+                    >
+                      <img
+                        src={previewUrl || "/placeholder.svg"}
+                        alt="Payment screenshot preview"
+                        className="w-full h-auto"
+                      />
+                    </div>
+                    <label className="w-full">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full bg-transparent"
+                        onClick={() => setUploadedFile(null)}
+                      >
+                        Change Screenshot
+                      </Button>
+                      <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                    </label>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {stage === "success" && (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <div className={cn("rounded-full p-4", theme === "dark" ? "bg-green-900/30" : "bg-green-100")}>
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className={cn("font-semibold text-lg", theme === "dark" ? "text-white" : "text-gray-900")}>
+                  Payment Confirmed!
+                </h3>
+                <p className={cn("text-sm", theme === "dark" ? "text-gray-400" : "text-gray-600")}>
+                  Your payment screenshot has been received. We'll verify and process your order shortly.
+                </p>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Legal Links */}
-          <div className={cn(
-            "text-xs text-center space-y-2 py-3 border-t",
-            theme === "dark" ? "text-gray-400 border-gray-600" : "text-gray-500 border-gray-200"
-          )}>
-            <p>By proceeding, you agree to our</p>
-            <div className="flex justify-center gap-4 flex-wrap">
-              <Link 
-                href="/terms" 
-                target="_blank"
-                className={cn(
-                  "underline hover:no-underline transition-colors",
-                  theme === "dark" ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"
-                )}
-              >
-                Terms of Service
-              </Link>
-              <Link 
-                href="/privacy" 
-                target="_blank"
-                className={cn(
-                  "underline hover:no-underline transition-colors",
-                  theme === "dark" ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"
-                )}
-              >
-                Privacy Policy
-              </Link>
-              <Link 
-                href="/refund-policy" 
-                target="_blank"
-                className={cn(
-                  "underline hover:no-underline transition-colors",
-                  theme === "dark" ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"
-                )}
-              >
-                Refund Policy
-              </Link>
-            </div>
+          <div
+            className={cn(
+              "text-xs text-center space-y-2 py-3 border-t",
+              theme === "dark" ? "text-gray-400 border-gray-600" : "text-gray-500 border-gray-200",
+            )}
+          >
+            <p>By proceeding, you agree to our Terms of Service and Privacy Policy</p>
           </div>
 
-          {/* Payment Button */}
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             <Button
               variant="outline"
-              onClick={onClose}
+              onClick={handleReset}
               className="h-11 bg-transparent order-2 sm:order-1"
               disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button
-              onClick={handlePayment}
-              disabled={isLoading}
-              className="h-11 bg-red-600 hover:bg-red-700 text-white font-medium order-1 sm:order-2 sm:flex-1"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Processing...
-                </>
-              ) : amount === 0 ? (
-                "Continue for Free"
-              ) : (
-                `Pay ₹${amount}`
-              )}
-            </Button>
+            {stage === "qr" && (
+              <Button
+                onClick={handleProceedToUpload}
+                disabled={isLoading}
+                className="h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium order-1 sm:order-2 sm:flex-1"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "I've Paid, Next"
+                )}
+              </Button>
+            )}
+            {stage === "upload" && (
+              <Button
+                onClick={handleSubmitScreenshot}
+                disabled={isLoading || !uploadedFile}
+                className="h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium order-1 sm:order-2 sm:flex-1"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Submit Screenshot"
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>

@@ -1,32 +1,80 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+// Create Supabase client with service role to bypass RLS
 const supabase = createClient(
-  process.env.DATABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // use service role for server routes
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!, // Use service role key (JWT token)
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  }
 );
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
+    const formData = await request.formData();
 
-    const {
-      name,
-      email,
-      phone,
-      razorpay_order_id,
-      razorpay_payment_id,
-      plan_ids,
-      plan_titles,
-      total_amount,
-      payment_status,
-    } = data;
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const phone = formData.get('phone') as string;
+    const plan_ids = formData.get('plan_ids') as string;
+    const plan_titles = formData.get('plan_titles') as string;
+    const total_amount = parseInt(formData.get('total_amount') as string);
+    const payment_status = formData.get('payment_status') as string || 'pending';
+    const screenshot = formData.get('screenshot') as File;
 
-    if (!name || !email || !phone || !razorpay_order_id) {
+    if (!name || !email || !phone) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    let imageUrl = null;
+
+    // Upload screenshot to Supabase storage if provided
+    if (screenshot && screenshot.size > 0) {
+      try {
+        // Generate unique filename
+        const timestamp = Date.now();
+        const fileExt = screenshot.name.split('.').pop();
+        const fileName = `payment_${timestamp}_${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+        // Convert File to ArrayBuffer
+        const arrayBuffer = await screenshot.arrayBuffer();
+        const buffer = new Uint8Array(arrayBuffer);
+
+        // Upload to Supabase storage
+        const { data: uploadData, error: uploadError } = await supabase
+          .storage
+          .from('images')
+          .upload(fileName, buffer, {
+            contentType: screenshot.type,
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw uploadError;
+        }
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('images')
+          .getPublicUrl(fileName);
+
+        imageUrl = publicUrl;
+      } catch (uploadError) {
+        console.error('Failed to upload screenshot:', uploadError);
+        return NextResponse.json(
+          { error: "Failed to upload screenshot" },
+          { status: 500 }
+        );
+      }
     }
 
     // Parse plan_ids if it's a string
@@ -60,40 +108,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
     }
 
-    // Insert into plan_applications table
+    // Insert into payments_v2 table
     const { data: result, error } = await supabase
-      .from("payments")
+      .from("payments_v2")
       .insert([
         {
           name,
           email,
           phone,
-          razorpay_order_id,
-          razorpay_payment_id: razorpay_payment_id || null,
+          link: imageUrl,
           plan_ids,
           plan_titles,
           total_amount,
-          payment_status: payment_status || "completed",
+          payment_status,
         },
       ])
       .select("id, created_at")
       .single();
 
     if (error) {
-      if (error.message.includes("duplicate key")) {
-        return NextResponse.json(
-          { error: "Application with this order ID already exists" },
-          { status: 409 }
-        );
-      }
+      console.error('Database insert error:', error);
       throw error;
     }
 
     return NextResponse.json({
       success: true,
-      message: "Application submitted successfully!",
+      message: "Payment application submitted successfully!",
       applicationId: result.id,
       createdAt: result.created_at,
+      imageUrl: imageUrl,
     });
   } catch (error) {
     console.error("Error submitting application:", error);
@@ -109,15 +152,12 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get("email");
-    const orderId = searchParams.get("orderId");
     const limit = Number.parseInt(searchParams.get("limit") || "50");
 
-    let query = supabase.from("plan_applications").select("*").order("created_at", { ascending: false });
+    let query = supabase.from("payments_v2").select("*").order("created_at", { ascending: false });
 
     if (email) {
       query = query.eq("email", email);
-    } else if (orderId) {
-      query = query.eq("razorpay_order_id", orderId);
     } else {
       query = query.limit(limit);
     }
@@ -128,13 +168,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      applications: result,
+      payments: result,
       count: result?.length ?? 0,
     });
   } catch (error) {
-    console.error("Error fetching applications:", error);
+    console.error("Error fetching payments:", error);
     return NextResponse.json(
-      { error: "Failed to fetch applications" },
+      { error: "Failed to fetch payments" },
       { status: 500 }
     );
   }
