@@ -116,17 +116,41 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
 
       console.log("Screenshot upload and application submitted successfully:", result)
 
+      // Fetch Google Form URLs for the purchased plans
+      const planIds = state.items.map((item) => item.id)
+      const formsResponse = await fetch('/api/getforms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ planIds })
+      })
+
+      const { forms } = await formsResponse.json()
+      
+      const plansWithForms = state.items.map((item) => {
+        const formData = forms.find((form: any) => form.id === item.id)
+        return {
+          ...item,
+          googleFormUrl: formData?.google_form_url || "#",
+        }
+      })
+
       // Process payment successfully
       dispatch({ type: "CLEAR_CART" })
-      setStage("success")
 
-      // Close after 3 seconds
-      setTimeout(() => {
-        onClose()
-        setStage("qr")
-        setUploadedFile(null)
-        setPreviewUrl("")
-      }, 3000)
+      // Redirect to payment success page
+      const planIdsParam = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.id)))
+      const planTitles = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.title)))
+      const planPrices = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.price)))
+      const planFormUrls = encodeURIComponent(JSON.stringify(plansWithForms.map((p) => p.googleFormUrl)))
+      const name = encodeURIComponent(customerInfo.name)
+      const email = encodeURIComponent(customerInfo.email)
+      const phone = encodeURIComponent(customerInfo.phone)
+
+      const successUrl = `/payment-success?planIds=${planIdsParam}&planTitles=${planTitles}&planPrices=${planPrices}&planFormUrls=${planFormUrls}&amount=${amount}&name=${name}&email=${email}&phone=${phone}`
+
+      window.location.href = successUrl
     } catch (error) {
       console.error("Upload error:", error)
       alert("Failed to upload screenshot. Please try again.")
@@ -451,7 +475,32 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
               theme === "dark" ? "text-gray-400 border-gray-600" : "text-gray-500 border-gray-200",
             )}
           >
-            <p>By proceeding, you agree to our Terms of Service and Privacy Policy</p>
+            <p>By proceeding, you agree to our</p>
+            <div className="flex justify-center gap-3 flex-wrap">
+              <a 
+                href="/terms" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "underline hover:no-underline transition-colors",
+                  theme === "dark" ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
+                )}
+              >
+                Terms of Service
+              </a>
+              <span className="text-gray-400">and</span>
+              <a 
+                href="/privacy" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "underline hover:no-underline transition-colors",
+                  theme === "dark" ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
+                )}
+              >
+                Privacy Policy
+              </a>
+            </div>
           </div>
 
           {/* Action Buttons */}
