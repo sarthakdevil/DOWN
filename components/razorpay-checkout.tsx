@@ -24,7 +24,7 @@ interface CustomerInfo {
   phone: string
 }
 
-const QR_CODE_IMAGE = "/WhatsApp Image 2025-11-19 at 23.08.35_4a1a2672.jpg"
+const QR_CODE_IMAGE = "/WhatsApp Image 2025-11-19 at 23.08.35_4a1a2672.png"
 const PAYMENT_ID = "s36448@ptaxis"
 
 export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPaymentCheckoutProps) {
