@@ -25,7 +25,7 @@ interface CustomerInfo {
 }
 
 const QR_CODE_IMAGE = "/latestqr.jpeg"
-const PAYMENT_ID = "s36448@ptaxis"
+const PAYMENT_ID = "8708669514@pthdfc"
 
 export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPaymentCheckoutProps) {
   const [stage, setStage] = useState<"qr" | "upload" | "success">("qr")
