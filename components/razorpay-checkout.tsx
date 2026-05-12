@@ -52,16 +52,16 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
     const file = e.target.files?.[0]
     if (file) {
       // Validate file type
-      if (!file.type.startsWith("image/")) {
-        alert("Please upload an image file")
-        return
-      }
+      // if (!file.type.startsWith("image/")) {
+      //   alert("Please upload an image file")
+      //   return
+      // }
 
       // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("File size must be less than 5MB")
-        return
-      }
+      // if (file.size > 5 * 1024 * 1024) {
+      //   alert("File size must be less than 5MB")
+      //   return
+      // }
 
       setUploadedFile(file)
 
@@ -74,26 +74,26 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
     }
   }
 
-  const handleProceedToUpload = () => {
+  const handleProceedToUpload = async () => {
     if (!customerInfo.name || !customerInfo.email || !customerInfo.phone) {
       alert("Please fill in all customer details")
       return
     }
-    setStage("upload")
+    await handleSubmitScreenshot()
   }
 
   const handleSubmitScreenshot = async () => {
-    if (!uploadedFile) {
-      alert("Please select a payment screenshot")
-      return
-    }
+    // if (!uploadedFile) {
+    //   alert("Please select a payment screenshot")
+    //   return
+    // }
 
     setIsLoading(true)
 
     try {
       // Prepare form data for submission
       const formData = new FormData()
-      formData.append("screenshot", uploadedFile)
+      // formData.append("screenshot", uploadedFile)
       formData.append("name", customerInfo.name)
       formData.append("email", customerInfo.email)
       formData.append("phone", customerInfo.phone)
@@ -337,6 +337,7 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
                 </div>
 
                 {/* Alternative: Upload Payment Screenshot */}
+                {/*fsgnogsdlg
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <div className={cn("flex-1 h-px", theme === "dark" ? "bg-gray-600" : "bg-gray-300")}></div>
@@ -381,13 +382,14 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
                     </div>
                   </div>
                 </div>
+                */}
               </div>
             </>
           )}
-
+        {/*}
           {stage === "upload" && (
             <>
-              {/* File Upload Section */}
+              {/* File Upload Section 
               <div className="space-y-4">
                 <h3
                   className={cn(
@@ -451,7 +453,7 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
               </div>
             </>
           )}
-
+          */}
           {stage === "success" && (
             <div className="flex flex-col items-center gap-4 py-8">
               <div className={cn("rounded-full p-4", theme === "dark" ? "bg-green-900/30" : "bg-green-100")}>
@@ -462,7 +464,7 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
                   Payment Confirmed!
                 </h3>
                 <p className={cn("text-sm", theme === "dark" ? "text-gray-400" : "text-gray-600")}>
-                  Your payment screenshot has been received. We'll verify and process your order shortly.
+                  Your application has been submitted. We'll process your order shortly.
                 </p>
               </div>
             </div>
@@ -525,11 +527,11 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
                     Processing...
                   </>
                 ) : (
-                  "I've Paid, Next"
+                  "Submit Application"
                 )}
               </Button>
             )}
-            {stage === "upload" && (
+            {/* {stage === "upload" && (
               <Button
                 onClick={handleSubmitScreenshot}
                 disabled={isLoading || !uploadedFile}
@@ -544,7 +546,7 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
                   "Submit Screenshot"
                 )}
               </Button>
-            )}
+            )} */}
           </div>
         </div>
       </DialogContent>
