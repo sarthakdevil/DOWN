@@ -84,24 +84,20 @@ export default function Home() {
 
         const response = await axios.get("/api/getplans")
         const data = response.data
-        if (data.plans && Array.isArray(data.plans) && data.plans.length > 0) {
+        if (data.plans && data.plans.length > 0) {
           setPlans(data.plans)
           setPlansError(null)
           // Optionally save to storage if you want to keep it for other purposes
           // savePlansToStorage(data.plans)
           plansLoaded.current = true
-        } else if (data.error) {
-          setPlans([])
-          setPlansError(data.error)
         } else {
           setPlans([])
-          setPlansError("No plans available at the moment.")
+          setPlansError(data.error || "No plans available at the moment.")
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error fetching plans:", error)
         setPlans([])
-        const errorMsg = error?.response?.data?.error || error?.message || "Unable to load plans. Please refresh the page."
-        setPlansError(errorMsg)
+        setPlansError("Unable to load plans. Please refresh the page.")
       }
     }
 
