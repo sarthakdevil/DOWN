@@ -51,17 +51,17 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
-      // if (!file.type.startsWith("image/")) {
-      //   alert("Please upload an image file")
-      //   return
-      // }
+      Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please upload an image file")
+        return
+      }
 
-      // Validate file size (max 5MB)
-      // if (file.size > 5 * 1024 * 1024) {
-      //   alert("File size must be less than 5MB")
-      //   return
-      // }
+      Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB")
+        return
+      }
 
       setUploadedFile(file)
 
@@ -386,10 +386,9 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
               </div>
             </>
           )}
-        {/*}
           {stage === "upload" && (
             <>
-              {/* File Upload Section 
+              {/* File Upload Section */}
               <div className="space-y-4">
                 <h3
                   className={cn(
@@ -453,7 +452,7 @@ export default function QRPaymentCheckout({ isOpen, onClose, amount }: QRPayment
               </div>
             </>
           )}
-          */}
+
           {stage === "success" && (
             <div className="flex flex-col items-center gap-4 py-8">
               <div className={cn("rounded-full p-4", theme === "dark" ? "bg-green-900/30" : "bg-green-100")}>
