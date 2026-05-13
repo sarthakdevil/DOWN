@@ -28,6 +28,7 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [galleryIndex, setGalleryIndex] = useState(0)
   const [plans, setPlans] = useState<Plan[]>([])
+  const [plansError, setPlansError] = useState<string | null>(null)
   const { dispatch, state } = useCart()
   const { theme } = useTheme()
   const plansLoaded = useRef(false)
@@ -84,14 +85,19 @@ export default function Home() {
         const response = await axios.get("/api/getplans")
         const data = response.data
         if (data.plans && data.plans.length > 0) {
-
           setPlans(data.plans)
+          setPlansError(null)
           // Optionally save to storage if you want to keep it for other purposes
           // savePlansToStorage(data.plans)
           plansLoaded.current = true
+        } else {
+          setPlans([])
+          setPlansError(data.error || "No plans available at the moment.")
         }
       } catch (error) {
         console.error("Error fetching plans:", error)
+        setPlans([])
+        setPlansError("Unable to load plans. Please refresh the page.")
       }
     }
 
@@ -285,11 +291,21 @@ export default function Home() {
 
       <section className="py-12 px-4 mt-8">
         <div className="container mx-auto">
-          <div className="flex items-center mb-8">
-            <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">
-              Plans
-            </h2>
-            <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
+          <div className="flex flex-col gap-4 mb-8">
+            <div className="flex items-center">
+              <h2 className={cn("text-3xl font-bold", theme === "dark" ? "text-white" : "text-gray-900")} id="plans">
+                Plans
+              </h2>
+              <div className={cn("flex-1 h-px ml-6", theme === "dark" ? "bg-white" : "bg-gray-300")}></div>
+            </div>
+            {plansError && (
+              <div className={cn(
+                "rounded-2xl border px-4 py-3 text-sm",
+                theme === "dark" ? "bg-[#1c1c1c] border-[#333333] text-red-300" : "bg-red-50 border-red-200 text-red-700",
+              )}>
+                {plansError}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
